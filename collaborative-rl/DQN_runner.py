@@ -1,15 +1,22 @@
 from env_creation import GNPyEnv_Gradual
-from ray.tune.registry import register_env
-from ray.rllib.algorithms.dqn.dqn import DQNConfig
 import networkx as nx
 import os
 from pathlib import Path
 from typing import Optional
 from dotenv import load_dotenv
 from toy2 import abstract_domain_star
-from ray.rllib.connectors.env_to_module import FlattenObservations
 
 def run_dqn(model):
+    try:
+        from ray.tune.registry import register_env
+        from ray.rllib.algorithms.dqn.dqn import DQNConfig
+        from ray.rllib.connectors.env_to_module import FlattenObservations
+    except ImportError as exc:  # pragma: no cover - only triggered when Ray missing
+        raise RuntimeError(
+            "Ray RLlib is required to run DQN. Install a compatible version, e.g.\n"
+            "  pip install 'ray[rllib]==2.4.0'\n"
+            "or update the project dependencies accordingly."
+        ) from exc
     print("Running DQN with model:", model)
 
     # creating model architecture

@@ -4,14 +4,30 @@ import random
 from dotenv import load_dotenv
 from toy2 import Optical_Monitoring
 from gymnasium import Env
-from gymnasium.spaces import Discrete, Dict, Box, MultiDiscrete
-from ray.rllib.utils.spaces.repeated import Repeated
+from gymnasium.spaces import Discrete, Dict, Box, MultiDiscrete, Space
 from typing import List
 import os
 import sys
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+
+try:
+	from ray.rllib.utils.spaces.repeated import Repeated
+except ImportError:  # pragma: no cover - fallback when Ray is unavailable
+	class Repeated(Space):
+		"""
+		Minimal fallback that mimics the subset of Ray's Repeated space used by the
+		environment. Sampling is delegated to the base space, capped by max_len.
+		"""
+
+		def __init__(self, base_space, max_len: int):
+			self.base_space = base_space
+			self.max_len = max_len
+			super().__init__(shape=(max_len,), dtype=object)
+
+		def sample(self, mask=None):  # pragma: no cover - gymnasium samples randomness
+			return [self.base_space.sample() for _ in range(self.max_len)]
 #from f1_score import F1Score
 #from tensorflow.config import run_functions_eagerly
 
