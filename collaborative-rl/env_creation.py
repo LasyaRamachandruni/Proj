@@ -165,6 +165,12 @@ class GNPyEnv_Gradual(Env):
 			dtype=np.float32,
 		)
 
+		self._latest_preds = np.zeros((1, self.prediction_width), dtype=np.float32)
+		self.last_reward = 0.0
+		self.last_switches = 0.0
+		self.last_reroute_cost = 0.0
+		self.last_lni = 0.0
+
 	def translate_trail(self, ls: list, translate_type: str):
 		"""
 		Given a list of nodes (in id or name form), converts to a list
@@ -202,8 +208,12 @@ class GNPyEnv_Gradual(Env):
 
 		for i in range(len(ls) - 1):
 			u, v = ls[i], ls[i + 1]
-			edge = (self.node_id_to_name[u], self.node_id_to_name[v])
-			rev_edge = (edge[1], edge[0])
+			if isinstance(u, str):
+				edge = (u, v)
+				rev_edge = (v, u)
+			else:
+				edge = (self.node_id_to_name[u], self.node_id_to_name[v])
+				rev_edge = (edge[1], edge[0])
 			if edge in self.edge_name_to_id:
 				retval.append(self.edge_name_to_id[edge])
 			elif rev_edge in self.edge_name_to_id:
@@ -227,10 +237,16 @@ class GNPyEnv_Gradual(Env):
 		retval = [0] * self.num_edges
 
 		for i in range(len(ls) - 1):
-			if (ls[i], ls[i+1]) in self.edge_name_to_id:
-				retval[self.edge_name_to_id[(ls[i], ls[i+1])]] += 1
-			elif (ls[i+1], ls[i]) in self.edge_name_to_id:
-				retval[self.edge_name_to_id[(ls[i+1], ls[i])]] += 1
+			u, v = ls[i], ls[i + 1]
+			if not isinstance(u, str):
+				u = self.node_id_to_name[u]
+				v = self.node_id_to_name[v]
+			edge = (u, v)
+			rev_edge = (v, u)
+			if edge in self.edge_name_to_id:
+				retval[self.edge_name_to_id[edge]] += 1
+			elif rev_edge in self.edge_name_to_id:
+				retval[self.edge_name_to_id[rev_edge]] += 1
 			else:
 				raise ValueError("edge does not exist!!!!")
 
@@ -307,53 +323,48 @@ class GNPyEnv_Gradual(Env):
 			print("Y_test: ", preds)
 			print("Y_test type: ", type(preds))
 
-		if preds.shape[1] < self.max_monitoring_trails:
-			pad = self.max_monitoring_trails - preds.shape[1]
-			preds = np.pad(preds, ((0, 0), (0, pad)), constant_values=0.0)
-		elif preds.shape[1] > self.max_monitoring_trails:
-			preds = preds[:, :self.max_monitoring_trails]
+		self._latest_preds = preds
+		self.last_lni = len(self.monitored_trails) / max(1, self.max_monitoring_trails)
+		obs_vec = self._to_obs_vec()
+		self._validate_obs(obs_vec, "reset" if reset else "step")
+		return obs_vec
 
-		Y_pred_binary = (preds > self.min_prob_threshold).astype(np.float32)
+	def _to_obs_vec(self) -> np.ndarray:
+		monitor_fraction = len(self.monitored_trails) / max(1, self.max_monitoring_trails)
+		candidate_fraction = len(self.lightpaths) / max(1, self.max_services_per_round)
+		time_fraction = self.timestep / max(1, self.max_rounds)
+		base = np.array([
+			np.clip(monitor_fraction, 0.0, 1.0),
+			np.clip(candidate_fraction, 0.0, 1.0),
+			np.clip(time_fraction, 0.0, 1.0),
+			math.tanh(self.last_reward),
+			math.tanh(self.last_switches),
+		], dtype=np.float32)
 
-		binary_vector = np.zeros(self.max_monitoring_trails, dtype=np.float32)
-		if Y_pred_binary.size > 0:
-			first_row = Y_pred_binary.reshape(-1, self.max_monitoring_trails)[0]
-			length = min(len(first_row), self.max_monitoring_trails)
-			binary_vector[:length] = first_row[:length]
-
-		chosen_vectors = np.zeros((self.max_monitoring_trails, self.num_edges), dtype=np.float32)
-		for idx, vec in enumerate(self.monitored_trails_edge_vector[:self.max_monitoring_trails]):
-			vec_arr = np.array(vec, dtype=np.float32)
-			if vec_arr.size < self.num_edges:
-				padded = np.zeros(self.num_edges, dtype=np.float32)
-				padded[:vec_arr.size] = vec_arr
-				chosen_vectors[idx] = padded
+		tail = np.tanh(self._latest_preds.flatten().astype(np.float32))
+		remainder = self.obs_dim - base.size
+		if remainder <= 0:
+			vec = base[: self.obs_dim]
+		else:
+			if tail.size < remainder:
+				tail = np.concatenate([tail, np.zeros(remainder - tail.size, dtype=np.float32)])
 			else:
-				chosen_vectors[idx] = vec_arr[:self.num_edges]
+				tail = tail[:remainder]
+			vec = np.concatenate([base, tail], dtype=np.float32)
 
-		candidate_vectors = np.zeros((self.max_services_per_round, self.num_edges), dtype=np.float32)
-		for idx, vec in enumerate(self.lightpaths_edge_vector[:self.max_services_per_round]):
-			vec_arr = np.array(vec, dtype=np.float32)
-			if vec_arr.size < self.num_edges:
-				padded = np.zeros(self.num_edges, dtype=np.float32)
-				padded[:vec_arr.size] = vec_arr
-				candidate_vectors[idx] = padded
-			else:
-				candidate_vectors[idx] = vec_arr[:self.num_edges]
-
-		parts = [
-			binary_vector,
-			chosen_vectors.reshape(-1),
-			candidate_vectors.reshape(-1),
-		]
-		vec = np.concatenate(parts).astype(np.float32)
-		if vec.shape[0] < self.obs_dim:
-			pad = np.zeros(self.obs_dim - vec.shape[0], dtype=np.float32)
-			vec = np.concatenate([vec, pad]).astype(np.float32)
-		elif vec.shape[0] > self.obs_dim:
-			vec = vec[:self.obs_dim]
 		np.clip(vec, -1.0, 1.0, out=vec)
 		return vec.astype(np.float32)
+
+	def _validate_obs(self, obs: np.ndarray, when: str) -> None:
+		if not isinstance(obs, np.ndarray):
+			raise ValueError(f"{when}: obs is not ndarray, got {type(obs)}")
+		if obs.shape != self.observation_space.shape:
+			raise ValueError(f"{when}: obs shape {obs.shape} != {self.observation_space.shape}")
+		if obs.dtype != np.float32:
+			raise ValueError(f"{when}: obs dtype {obs.dtype} != float32")
+		if not np.all(np.isfinite(obs)):
+			bad = np.where(~np.isfinite(obs))[0][:10]
+			raise ValueError(f"{when}: obs contains non-finite values at indices {bad}")
 
 	def _get_info(self):
 		return {"timestep": self.timestep, "output file": self.file_num, "score": self.curr_score}
@@ -376,7 +387,8 @@ class GNPyEnv_Gradual(Env):
 
 		return self.om.select_link_failure_test(target_edges), len(target_edges)
 
-	def reset(self, seed=None, options=None):
+	def reset(self, *, seed: int | None = None, options: dict | None = None):
+		super().reset(seed=seed)
 		# picking random file from random subdirectory (broken fiber or regular traffic)
 		random_subdir = random.choice(os.listdir(self.broken_fibers_dir))
 		files = os.listdir(os.path.join(self.broken_fibers_dir, random_subdir))
@@ -391,13 +403,11 @@ class GNPyEnv_Gradual(Env):
 			self.lightpaths_dict[self.file_num] = self.get_lightpaths(os.path.join(self.broken_fibers_dir, random_subdir) + '/' + random_filename)
 		self.responses = self.lightpaths_dict[self.file_num]
 
-		# clearing previous monitoring nodes
-		for i in self.monitored_trails:
-			self.om.remove_monitoring_trail(i)
+		for trail in self.monitored_trails:
+			self.om.remove_monitoring_trail(trail)
 		self.monitored_trails.clear()
 		self.monitored_trails_edge_vector.clear()
 
-		# determine which monitoring paths should persist into the new episode
 		if self.persisted_monitor_trails is None:
 			persisted_trails = [list(mp) for mp in self.initial_monitoring_paths]
 			persisted_vectors = [self.translate_trail_to_edge_vector(mp) for mp in persisted_trails]
@@ -421,60 +431,72 @@ class GNPyEnv_Gradual(Env):
 		self.persisted_monitor_trails_edge_vector = [list(vec) for vec in self.monitored_trails_edge_vector]
 
 		self.curr_score = None
+		self.curr_round = 0
+		self.timestep = 0
+		self.last_reward = 0.0
+		self.last_switches = 0.0
+		self.last_reroute_cost = 0.0
+		self.last_lni = len(self.monitored_trails) / max(1, self.max_monitoring_trails)
+		self._latest_preds = np.zeros_like(self._latest_preds)
 
-		info = self._get_info()
-		observation = self._get_obs(reset=True)
-		return observation, info
+		obs = self._get_obs(reset=True)
+		self._validate_obs(obs, "reset")
+		return obs, {}
 
 	def step(self, action):
 		self.timestep += 1
-		terminated = False
-		reward = None
+		self.curr_round += 1
+		truncated = False
+		reward = 0.0
+		new_trail_added = False
 
-		if action >= self.max_services_per_round:
-			print("ERROR")
-
-		if action < len(self.lightpaths):
-			chosen_path = self.lightpaths[action] # always chooses a valid path
-			chosen_path_as_node_names = self.translate_trail(chosen_path, "id to name")
-
-			if chosen_path_as_node_names not in self.monitored_trails:
-				self.monitored_trails.append(chosen_path_as_node_names)
-				self.om.add_monitoring_trail(chosen_path_as_node_names)
-				edge_vector = self.translate_trail_to_edge_vector(chosen_path_as_node_names)
-				self.monitored_trails_edge_vector.append(edge_vector)
-				self.persisted_monitor_trails = [list(mp) for mp in self.monitored_trails]
-				self.persisted_monitor_trails_edge_vector = [list(vec) for vec in self.monitored_trails_edge_vector]
-			reward = 0
-
-			self.lightpaths.pop(action)
-			self.lightpaths_edge_vector.pop(action)
-			self.lightpaths_osnrs.pop(action)
+		if not isinstance(action, (int, np.integer)) or action < 0 or action >= self.n_actions:
+			reward = -1.0
+			truncated = True
 		else:
-			# illegal action. Terminating
-			reward = -1
-			info = {}
-			observation = self._get_obs(reset=False)
-			terminated = True
-			return observation, reward, terminated, True, info
+			if action < len(self.lightpaths):
+				chosen_path = self.lightpaths[action]
+				chosen_path_as_node_names = self.translate_trail(chosen_path, "id to name")
 
-		if len(self.monitored_trails_edge_vector) == self.max_monitoring_trails:
-			terminated = True
-			self.curr_score, num_edges_selected = self._get_score()
-			info = self._get_info()
-			reward = ((self.num_edges*num_edges_selected)/self.curr_score)**3
+				if chosen_path_as_node_names not in self.monitored_trails:
+					self.monitored_trails.append(chosen_path_as_node_names)
+					self.om.add_monitoring_trail(chosen_path_as_node_names)
+					edge_vector = self.translate_trail_to_edge_vector(chosen_path_as_node_names)
+					self.monitored_trails_edge_vector.append(edge_vector)
+					self.persisted_monitor_trails = [list(mp) for mp in self.monitored_trails]
+					self.persisted_monitor_trails_edge_vector = [list(vec) for vec in self.monitored_trails_edge_vector]
+					reward = 1.0
+					new_trail_added = True
 
-			# writing to logging file
-			if self.timestep > self.start_recording_timestep:
-				json_string = json.dumps(info)
-				with open(self.logging_file, "a") as f:
-					f.write(json_string + "\n")
-		else:
-			# Haven't selected enough trails yet
-			info = {}
+				self.lightpaths.pop(action)
+				self.lightpaths_edge_vector.pop(action)
+				self.lightpaths_osnrs.pop(action)
+			else:
+				reward = -0.5
 
-		observation = self._get_obs(reset=False)
-		return observation, reward, terminated, False, info
+		max_trails_reached = len(self.monitored_trails_edge_vector) >= self.max_monitoring_trails
+		max_rounds_reached = self.curr_round >= self.max_rounds
+		no_candidates = len(self.lightpaths) == 0
+		terminated = max_trails_reached or max_rounds_reached or no_candidates
+
+		if terminated:
+			try:
+				self.curr_score, _ = self._get_score()
+			except Exception as exc:
+				print(f"[GNPyEnv_Gradual] Warning: score computation failed ({exc})")
+				self.curr_score = None
+
+		self.last_switches = 1.0 if new_trail_added else 0.0
+		self.last_reroute_cost = float(len(self.lightpaths))
+		self.last_reward = reward
+
+		obs = self._get_obs(reset=False)
+		info = {"monitored_paths": len(self.monitored_trails),
+			"remaining_candidates": len(self.lightpaths),
+			"score": self.curr_score,
+		}
+
+		return obs, float(reward), bool(terminated), bool(truncated), info
 
 	def get_lightpaths(self, service_file):
 		node_set = set(self.broker_graph.nodes)
