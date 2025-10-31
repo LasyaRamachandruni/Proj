@@ -1,16 +1,22 @@
-from env_creation import GNPyEnv_Gradual
-import networkx as nx
 import os
+import sys
 from pathlib import Path
 from typing import Optional
+
+CURRENT_DIR = Path(__file__).resolve().parent
+if str(CURRENT_DIR) not in sys.path:
+    sys.path.insert(0, str(CURRENT_DIR))
+
 from dotenv import load_dotenv
+import networkx as nx
+
+from env_creation import GNPyEnv_Gradual
 from toy2 import abstract_domain_star
 
 def run_dqn(model):
     try:
         from ray.tune.registry import register_env
         from ray.rllib.algorithms.dqn.dqn import DQNConfig
-        from ray.rllib.connectors.env_to_module import FlattenObservations
     except ImportError as exc:  # pragma: no cover - only triggered when Ray missing
         raise RuntimeError(
             "Ray RLlib is required to run DQN. Install a compatible version, e.g.\n"
@@ -26,32 +32,57 @@ def run_dqn(model):
 
     # Load the variables from the .env file
     load_dotenv()
-    project_dir = Path(__file__).resolve().parent
+    project_dir = CURRENT_DIR
     workspace_dir = project_dir.parent
 
-    def _resolve_path(env_value: Optional[str], default: Path, *, must_exist: bool = True) -> Path:
+    def _resolve_path(env_value: Optional[str], *defaults: Path, must_exist: bool = True) -> Path:
+        candidates: list[Path] = []
+        tried: list[Path] = []
+
         if env_value:
             candidate = Path(env_value).expanduser()
             if not candidate.is_absolute():
                 candidate = (workspace_dir / candidate).resolve()
-            if not must_exist or candidate.exists():
-                return candidate
-            print(f"[run_dqn] Warning: Path '{candidate}' not found. Falling back to '{default}'.")
-        return default
+            candidates.append(candidate)
+
+        candidates.extend(defaults or [])
+        if not candidates:
+            raise ValueError("_resolve_path requires at least one default candidate")
+
+        for cand in candidates:
+            cand = cand.expanduser()
+            if not cand.is_absolute():
+                cand = (workspace_dir / cand).resolve()
+            else:
+                cand = cand.resolve()
+            tried.append(cand)
+            if not must_exist or cand.exists():
+                return cand
+
+        if must_exist:
+            tried_str = "\n  ".join(str(p) for p in tried)
+            raise FileNotFoundError(
+                "Expected path not found. Checked the following locations:\n  " + tried_str
+            )
+
+        return tried[-1]
 
     initial_moni_paths = None
     node_count_dic = None
     num_rounds = 20
     max_services_per_round = 20
     max_monitor_trails = 8
-    training_time = 10
+    training_time = 5
     start_recording_timestep = (training_time*1000)-(5* num_rounds * max_monitor_trails)
 
 
     # toy 2
     top_id = 2
-    default_output_dir = workspace_dir / "data" / "toy_2-20_rounds-20_reqs"
-    output_dir_path = _resolve_path(os.getenv("OUTPUT_FILES_DIR_top2"), default_output_dir)
+    output_dir_path = _resolve_path(
+        os.getenv("OUTPUT_FILES_DIR_top2"),
+        workspace_dir / "data" / "toy_2-20_rounds-20_reqs",
+        project_dir / "data" / "toy_2-20_rounds-20_reqs",
+    )
     if not output_dir_path.exists():
         raise FileNotFoundError(f"Expected output files directory at '{output_dir_path}'")
     broker_fullmesh = nx.Graph()
@@ -126,13 +157,38 @@ def run_dqn(model):
             "fiber (dA_v2 \u2192 dB_v3)_(1/2)"
         ]
 
-    logging_dir_default = project_dir / "logging"
-    broken_fibers_dir_default = project_dir / "data"
-    logging_dir = _resolve_path(os.getenv("LOGGING_FILE_DIR"), logging_dir_default, must_exist=False)
-    broken_fibers_dir = _resolve_path(os.getenv("BROKEN_FIBERS_DIR"), broken_fibers_dir_default)
-    if not broken_fibers_dir.exists():
-        raise FileNotFoundError(f"Expected broken fibers directory at '{broken_fibers_dir}'")
-    logging_dir.mkdir(parents=True, exist_ok=True)
+    logging_dir = _resolve_path(
+        os.getenv("LOGGING_FILE_DIR"),
+        workspace_dir / "logs",
+        project_dir / "logs",
+        must_exist=False,
+    )
+    broken_fiber_candidates = [workspace_dir / "data", project_dir / "data"]
+    broken_fibers_dir = _resolve_path(
+        os.getenv("BROKEN_FIBERS_DIR"),
+        *broken_fiber_candidates,
+    )
+
+    def _has_fiber_dirs(path: Path) -> bool:
+        try:
+            return any(child.is_dir() and child.name.startswith("fiber") for child in path.iterdir())
+        except FileNotFoundError:
+            return False
+
+    if not _has_fiber_dirs(broken_fibers_dir):
+        for candidate in broken_fiber_candidates:
+            if _has_fiber_dirs(candidate):
+                print(f"[run_dqn] Note: Using broken fiber directory '{candidate}'")
+                broken_fibers_dir = candidate
+                break
+    try:
+        logging_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        fallback_logging = workspace_dir / "logs"
+        fallback_logging.mkdir(parents=True, exist_ok=True)
+        print(f"[run_dqn] Warning: unable to create logging directory at '{logging_dir}'. "
+              f"Using '{fallback_logging}' instead.")
+        logging_dir = fallback_logging
     logging_file = logging_dir / f"top{top_id}-{max_monitor_trails}trails.txt"
 
     def env_creator(env_config):
@@ -142,21 +198,11 @@ def run_dqn(model):
             broken_fibers=broken_fibers, broken_fibers_dir=str(broken_fibers_dir), node_count_dic=node_count_dic)
     register_env("GNPyEnv_Gradual", env_creator)
 
-    config = (
-        DQNConfig()
-        .environment("GNPyEnv_Gradual")
-        .training(replay_buffer_config={
-            "type": "MultiAgentPrioritizedReplayBuffer",
-            "capacity": 60000,
-            "alpha": 0.5,
-            "beta": 0.5,
-            }
-        )
-        .env_runners(num_env_runners=1, env_to_module_connector=lambda env: FlattenObservations())
-        .resources(num_gpus=int(os.getenv("NUM_GPUS")))
-        .framework("torch")
-        .experimental(_disable_preprocessor_api=True)
-    )
+    config = DQNConfig()
+    config = config.environment("GNPyEnv_Gradual")
+    config = config.env_runners(num_env_runners=1)
+    config = config.resources(num_gpus=int(os.getenv("NUM_GPUS", "0")))
+    config = config.framework("torch")
 
     config._forward_exploration = {
                 "type": "EpsilonGreedy",
@@ -167,7 +213,7 @@ def run_dqn(model):
     algo = config.build()
 
     for _ in range(training_time):
-    	algo.train()
+        algo.train()
     algo.stop()
     '''
     save_result = algo.save()

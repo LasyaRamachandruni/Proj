@@ -4,58 +4,62 @@ import random
 from dotenv import load_dotenv
 from toy2 import Optical_Monitoring
 from gymnasium import Env
-from gymnasium.spaces import Discrete, Dict, Box, MultiDiscrete, Space
+from gymnasium.spaces import Discrete, Box
 from typing import List
 import os
 import sys
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.models import load_model
 
 try:
-	from ray.rllib.utils.spaces.repeated import Repeated
-except ImportError:  # pragma: no cover - fallback when Ray is unavailable
-	class Repeated(Space):
-		"""
-		Minimal fallback that mimics the subset of Ray's Repeated space used by the
-		environment. Sampling is delegated to the base space, capped by max_len.
-		"""
+    import tensorflow as tf  # type: ignore
+    from tensorflow.keras.models import load_model  # type: ignore
+    _HAS_TF = True
+except Exception:  # pragma: no cover - optional dependency
+    tf = None  # type: ignore
+    load_model = None  # type: ignore
+    _HAS_TF = False
 
-		def __init__(self, base_space, max_len: int):
-			self.base_space = base_space
-			self.max_len = max_len
-			super().__init__(shape=(max_len,), dtype=object)
-
-		def sample(self, mask=None):  # pragma: no cover - gymnasium samples randomness
-			return [self.base_space.sample() for _ in range(self.max_len)]
 #from f1_score import F1Score
 #from tensorflow.config import run_functions_eagerly
+
 
 class GNPyEnv_Gradual(Env):
 	def __init__(self, output_files_dir: str, rounds: int, max_services_per_round: int, broker_graph: nx.classes.graph.Graph, 
 		max_monitoring_trails: int, start_recording_timestep: int, logging_file: str, broken_fibers: List[str], 
 		broken_fibers_dir: str, initial_monitoring_paths: list = None, min_prob_threshold: float = 0.25, node_count_dic: dict | None = None):
-		tf.config.run_functions_eagerly(True)
+		self.starting_moni_paths = 4
+		self.prediction_width = self.starting_moni_paths
+		self.model = None
 
-		#self.model.build(input_shape=(None, None, 16))
-		default_model_path = os.path.join(os.path.dirname(__file__), "saved_model.keras")
-		model_path_env = os.getenv("MODEL_PATH")
-		if model_path_env:
-			candidate_path = os.path.abspath(os.path.expanduser(model_path_env))
-			if os.path.isfile(candidate_path):
-				model_path = candidate_path
+		if _HAS_TF:
+			tf.config.run_functions_eagerly(True)  # type: ignore[attr-defined]
+			default_model_path = os.path.join(os.path.dirname(__file__), "saved_model.keras")
+			model_path_env = os.getenv("MODEL_PATH")
+			if model_path_env:
+				candidate_path = os.path.abspath(os.path.expanduser(model_path_env))
+				if os.path.isfile(candidate_path):
+					model_path = candidate_path
+				else:
+					print(f"[GNPyEnv_Gradual] Warning: MODEL_PATH '{candidate_path}' not found. Falling back to '{default_model_path}'.")
+					model_path = default_model_path
 			else:
-				print(f"[GNPyEnv_Gradual] Warning: MODEL_PATH '{candidate_path}' not found. Falling back to '{default_model_path}'.")
 				model_path = default_model_path
+			if os.path.isfile(model_path):
+				try:
+					self.model = load_model(model_path)
+					self.model.run_eagerly = True
+					if hasattr(self.model, "output_shape") and self.model.output_shape[-1]:
+						self.prediction_width = int(self.model.output_shape[-1])
+					print(f"Model input shape: {self.model.input_shape}")
+				except Exception as exc:
+					print(f"[GNPyEnv_Gradual] Warning: unable to load model '{model_path}': {exc}\n"
+					      "Continuing without TensorFlow predictions.")
+					self.model = None
+			else:
+				print(f"[GNPyEnv_Gradual] Info: MODEL_PATH '{model_path}' not found."
+				      " Continuing without TensorFlow predictions.")
 		else:
-			model_path = default_model_path
-		if not os.path.isfile(model_path):
-			raise FileNotFoundError(f"MODEL_PATH '{model_path}' does not exist")
-		self.model = load_model(model_path)#,
-			#custom_objects={"F1Score": F1Score})
-		self.model.run_eagerly = True
-		input_shape = self.model.input_shape
-		print(f"Model input shape: {input_shape}")
+			print("[GNPyEnv_Gradual] Info: TensorFlow/Keras not available. Predictions disabled.")
 
 		# setting up initial monitoring paths
 		if initial_monitoring_paths is not None:
@@ -73,7 +77,6 @@ class GNPyEnv_Gradual(Env):
 
 		self.max_rounds = rounds
 
-		self.starting_moni_paths = 4
 		self.max_monitoring_trails = max_monitoring_trails
 
 		self.max_services_per_round = max_services_per_round
@@ -148,12 +151,16 @@ class GNPyEnv_Gradual(Env):
 		self.broken_fibers_dir = broken_fibers_dir
 		self.broken_fibers = broken_fibers
 
-		self.observation_space = Dict({
-			# "high" is set to 2 (instead of 1) below to account for cycles that traverse an edge twice
-			"chosen moni paths": Repeated(Box(low=0, high=2, shape=(self.num_edges,), dtype=np.int8), max_len=self.max_monitoring_trails),
-			"0-1": Repeated(Discrete(n=2, start=0), max_len=self.max_monitoring_trails),
-			"new candidate paths": Repeated(Box(low=0, high=2, shape=(self.num_edges,), dtype=np.int8), max_len=self.max_services_per_round)
-		})
+		self.obs_vector_length = (
+			self.max_monitoring_trails
+			+ self.max_monitoring_trails * self.num_edges
+			+ self.max_services_per_round * self.num_edges
+		)
+		self.observation_space = Box(
+			low=np.zeros(self.obs_vector_length, dtype=np.float32),
+			high=np.full(self.obs_vector_length, 2.0, dtype=np.float32),
+			dtype=np.float32,
+		)
 
 		self.action_space = Discrete(self.max_services_per_round)
 
@@ -232,10 +239,10 @@ class GNPyEnv_Gradual(Env):
 			for d in self.responses:
 				# d is a dict. "path" is the key to lead to the path (name format)
 				path_as_node_names = d["path"]
-				path_as_edge_ids = self.translate_trail_to_edge_ids(path_as_node_names)
+				path_as_node_ids = self.translate_trail(path_as_node_names, "name to id")
 				path_as_edge_vector = self.translate_trail_to_edge_vector(path_as_node_names)
 				self.lightpaths_edge_vector.append(path_as_edge_vector)
-				self.lightpaths.append(path_as_edge_ids)
+				self.lightpaths.append(path_as_node_ids)
 				self.lightpaths_osnrs.append([
 	                d['OSNR-0.1nm'],
 	                d['OSNR-bandwidth'],
@@ -265,37 +272,94 @@ class GNPyEnv_Gradual(Env):
 					    d['SNR-bandwidth']
 					])
 
-		# changing to 1-d list
-		X_test = np.array(metrics)
-		X_test = X_test.reshape(-1, 16)
+		# changing to 1-d list with padding to multiples of 16
+		flat_metrics = np.array(metrics, dtype=np.float32).flatten()
+		if flat_metrics.size == 0:
+			flat_metrics = np.zeros(16, dtype=np.float32)
+		elif flat_metrics.size % 16 != 0:
+			pad_len = 16 - (flat_metrics.size % 16)
+			flat_metrics = np.pad(flat_metrics, (0, pad_len))
+		X_test = flat_metrics.reshape(-1, 16)
+		num_samples = X_test.shape[0]
 		X_test = np.expand_dims(X_test, axis=1)
-		print("X_test: ", X_test)
+		if os.getenv("GNPY_ENV_DEBUG") == "1":
+			print("X_test: ", X_test)
 
-		Y_pred_probs = self.model.predict_on_batch(X_test.astype(np.float32))
-		if not isinstance(Y_pred_probs, np.ndarray):
-			Y_pred_probs = np.array(Y_pred_probs)
-		print("Y_test: ", Y_pred_probs)
-		print("Y_test type: ", type(Y_pred_probs))
-		#Y_pred_probs = self.model.predict_on_batch(np.array(X_test).reshape(1,1,16))
-		# print(Y_pred_probs, type(Y_pred_probs))
-		Y_pred_binary = (Y_pred_probs > self.min_prob_threshold).astype(int)
+		preds = None
+		if self.model is not None:
+			try:
+				preds_array = self.model.predict_on_batch(X_test.astype(np.float32))
+				preds_array = np.array(preds_array)
+				preds = preds_array.reshape(preds_array.shape[0], -1)
+			except Exception as exc:
+				print(f"[GNPyEnv_Gradual] Warning: model inference failed ({exc}). Disabling predictions.")
+				self.model = None
+				self.prediction_width = self.starting_moni_paths
+		if preds is None:
+			preds = np.zeros((num_samples, self.prediction_width), dtype=np.float32)
+		if os.getenv("GNPY_ENV_DEBUG") == "1":
+			print("Y_test: ", preds)
+			print("Y_test type: ", type(preds))
 
-		return {
-			"chosen moni paths": self.monitored_trails_edge_vector,
-			"0-1": Y_pred_binary,
-			"new candidate paths": self.lightpaths_edge_vector
-		}
+		if preds.shape[1] < self.max_monitoring_trails:
+			pad = self.max_monitoring_trails - preds.shape[1]
+			preds = np.pad(preds, ((0, 0), (0, pad)), constant_values=0.0)
+		elif preds.shape[1] > self.max_monitoring_trails:
+			preds = preds[:, :self.max_monitoring_trails]
+
+		Y_pred_binary = (preds > self.min_prob_threshold).astype(np.float32)
+
+		binary_vector = np.zeros(self.max_monitoring_trails, dtype=np.float32)
+		if Y_pred_binary.size > 0:
+			first_row = Y_pred_binary.reshape(-1, self.max_monitoring_trails)[0]
+			length = min(len(first_row), self.max_monitoring_trails)
+			binary_vector[:length] = first_row[:length]
+
+		chosen_vectors = np.zeros((self.max_monitoring_trails, self.num_edges), dtype=np.float32)
+		for idx, vec in enumerate(self.monitored_trails_edge_vector[:self.max_monitoring_trails]):
+			vec_arr = np.array(vec, dtype=np.float32)
+			if vec_arr.size < self.num_edges:
+				padded = np.zeros(self.num_edges, dtype=np.float32)
+				padded[:vec_arr.size] = vec_arr
+				chosen_vectors[idx] = padded
+			else:
+				chosen_vectors[idx] = vec_arr[:self.num_edges]
+
+		candidate_vectors = np.zeros((self.max_services_per_round, self.num_edges), dtype=np.float32)
+		for idx, vec in enumerate(self.lightpaths_edge_vector[:self.max_services_per_round]):
+			vec_arr = np.array(vec, dtype=np.float32)
+			if vec_arr.size < self.num_edges:
+				padded = np.zeros(self.num_edges, dtype=np.float32)
+				padded[:vec_arr.size] = vec_arr
+				candidate_vectors[idx] = padded
+			else:
+				candidate_vectors[idx] = vec_arr[:self.num_edges]
+
+		flat_obs = np.concatenate([
+			binary_vector,
+			chosen_vectors.reshape(-1),
+			candidate_vectors.reshape(-1),
+		]).astype(np.float32)
+
+		return flat_obs
 
 	def _get_info(self):
 		return {"timestep": self.timestep, "output file": self.file_num, "score": self.curr_score}
 
 	def _get_score(self):
 		# get edges from all monitoring paths
-		edges_used = [0]*self.num_edges
+		edges_used = np.zeros(self.num_edges, dtype=np.int32)
 		for v in self.monitored_trails_edge_vector:
-			edges_used += v
+			vec_arr = np.array(v, dtype=np.int32)
+			if vec_arr.size < self.num_edges:
+				padded = np.zeros(self.num_edges, dtype=np.int32)
+				padded[:vec_arr.size] = vec_arr
+				vec_arr = padded
+			else:
+				vec_arr = vec_arr[:self.num_edges]
+			edges_used += vec_arr
 		target_edges = []
-		for i in range(len(edges_used)):
+		for i in range(self.num_edges):
 			if edges_used[i] > 0:
 				target_edges.append(self.edge_id_to_name[i])
 
