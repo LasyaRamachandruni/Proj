@@ -84,7 +84,11 @@ def _env_factory(env_config):
     log_dir = Path(os.getenv("LOGGING_FILE_DIR", workspace_dir / "logs")).expanduser()
     if not log_dir.is_absolute():
         log_dir = (workspace_dir / log_dir).resolve()
-    log_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        log_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        log_dir = (workspace_dir / "logs").resolve()
+        log_dir.mkdir(parents=True, exist_ok=True)
 
     return GNPyEnv_Gradual(
         output_files_dir=str(output_dir),
@@ -111,7 +115,7 @@ def run():
         .environment(env_name)
         .framework("torch")
         .resources(num_gpus=0)
-        .rollouts(num_rollout_workers=1, num_envs_per_worker=1, rollout_fragment_length=16)
+        .env_runners(num_env_runners=1, num_envs_per_env_runner=1, rollout_fragment_length=16)
         .training(
             train_batch_size=64,
             gamma=0.99,
@@ -119,28 +123,30 @@ def run():
             dueling=True,
             double_q=True,
         )
-        .exploration(
-            exploration_config={
-                "type": "EpsilonGreedy",
-                "initial_epsilon": 1.0,
-                "final_epsilon": 0.05,
-                "epsilon_timesteps": 10_000,
-            }
-        )
     )
 
     algo = cfg.build()
     for i in range(10):
         result = algo.train()
+        stats = result.get("env_runners", {})
+        reward_mean = result.get("episode_reward_mean")
+        if reward_mean is None:
+            reward_mean = stats.get("episode_return_mean")
+        len_mean = result.get("episode_len_mean")
+        if len_mean is None:
+            len_mean = stats.get("episode_len_mean")
+        ts_total = result.get("timesteps_total")
+        if ts_total is None:
+            ts_total = result.get("num_env_steps_sampled_lifetime") or stats.get("num_env_steps_sampled_lifetime")
         print(
             "iter",
             i,
             "reward_mean",
-            result.get("episode_reward_mean"),
+            reward_mean,
             "len_mean",
-            result.get("episode_len_mean"),
+            len_mean,
             "ts_total",
-            result.get("timesteps_total"),
+            ts_total,
         )
     algo.stop()
 

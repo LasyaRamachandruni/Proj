@@ -170,6 +170,15 @@ class GNPyEnv_Gradual(Env):
 		self.last_switches = 0.0
 		self.last_reroute_cost = 0.0
 		self.last_lni = 0.0
+		self.max_steps_per_episode = getattr(self, "max_steps_per_episode", max(200, rounds * 2))
+		self.lni_target = getattr(self, "lni_target", 0.5)
+		self.lni_weight = getattr(self, "lni_weight", 0.0)
+		self.switch_penalty = getattr(self, "switch_penalty", 0.0)
+		self.reroute_cost_weight = getattr(self, "reroute_cost_weight", 0.0)
+		self._r_detect = 0.0
+		self._r_lni = 0.0
+		self._r_switch = 0.0
+		self._r_reroute = 0.0
 
 	def translate_trail(self, ls: list, translate_type: str):
 		"""
@@ -389,6 +398,9 @@ class GNPyEnv_Gradual(Env):
 
 	def reset(self, *, seed: int | None = None, options: dict | None = None):
 		super().reset(seed=seed)
+		if seed is not None:
+			np.random.seed(seed)
+			random.seed(seed)
 		# picking random file from random subdirectory (broken fiber or regular traffic)
 		random_subdir = random.choice(os.listdir(self.broken_fibers_dir))
 		files = os.listdir(os.path.join(self.broken_fibers_dir, random_subdir))
@@ -438,6 +450,10 @@ class GNPyEnv_Gradual(Env):
 		self.last_reroute_cost = 0.0
 		self.last_lni = len(self.monitored_trails) / max(1, self.max_monitoring_trails)
 		self._latest_preds = np.zeros_like(self._latest_preds)
+		self._r_detect = 0.0
+		self._r_lni = 0.0
+		self._r_switch = 0.0
+		self._r_reroute = 0.0
 
 		obs = self._get_obs(reset=True)
 		self._validate_obs(obs, "reset")
@@ -447,15 +463,22 @@ class GNPyEnv_Gradual(Env):
 		self.timestep += 1
 		self.curr_round += 1
 		truncated = False
-		reward = 0.0
+		reward_base = 0.0
 		new_trail_added = False
 
-		if not isinstance(action, (int, np.integer)) or action < 0 or action >= self.n_actions:
-			reward = -1.0
+		if not isinstance(action, (int, np.integer)):
+			reward_base = -1.0
 			truncated = True
 		else:
-			if action < len(self.lightpaths):
-				chosen_path = self.lightpaths[action]
+			raw_action = int(action)
+			num_candidates = len(self.lightpaths)
+			if raw_action < 0:
+				reward_base = -1.0
+				truncated = True
+			elif num_candidates == 0:
+				reward_base = -0.5 if raw_action != 0 else reward_base
+			elif raw_action < num_candidates:
+				chosen_path = self.lightpaths[raw_action]
 				chosen_path_as_node_names = self.translate_trail(chosen_path, "id to name")
 
 				if chosen_path_as_node_names not in self.monitored_trails:
@@ -465,19 +488,21 @@ class GNPyEnv_Gradual(Env):
 					self.monitored_trails_edge_vector.append(edge_vector)
 					self.persisted_monitor_trails = [list(mp) for mp in self.monitored_trails]
 					self.persisted_monitor_trails_edge_vector = [list(vec) for vec in self.monitored_trails_edge_vector]
-					reward = 1.0
+					reward_base = 1.0
 					new_trail_added = True
 
-				self.lightpaths.pop(action)
-				self.lightpaths_edge_vector.pop(action)
-				self.lightpaths_osnrs.pop(action)
+				self.lightpaths.pop(raw_action)
+				self.lightpaths_edge_vector.pop(raw_action)
+				self.lightpaths_osnrs.pop(raw_action)
 			else:
-				reward = -0.5
+				reward_base = -0.5
 
 		max_trails_reached = len(self.monitored_trails_edge_vector) >= self.max_monitoring_trails
 		max_rounds_reached = self.curr_round >= self.max_rounds
 		no_candidates = len(self.lightpaths) == 0
+		time_limit_reached = self.timestep >= self.max_steps_per_episode
 		terminated = max_trails_reached or max_rounds_reached or no_candidates
+		truncated = truncated or time_limit_reached
 
 		if terminated:
 			try:
@@ -486,14 +511,40 @@ class GNPyEnv_Gradual(Env):
 				print(f"[GNPyEnv_Gradual] Warning: score computation failed ({exc})")
 				self.curr_score = None
 
-		self.last_switches = 1.0 if new_trail_added else 0.0
-		self.last_reroute_cost = float(len(self.lightpaths))
+		lni = len(self.monitored_trails) / max(1, self.max_monitoring_trails)
+		switch_count = 1.0 if new_trail_added else 0.0
+		reroute_cost = float(len(self.lightpaths))
+		self.last_switches = switch_count
+		self.last_reroute_cost = reroute_cost
+		self.last_lni = lni
+		self._r_detect = reward_base
+		self._r_lni = self.lni_weight * (lni - self.lni_target)
+		self._r_switch = -self.switch_penalty * switch_count
+		self._r_reroute = -self.reroute_cost_weight * reroute_cost
+		reward = self._r_detect + self._r_lni + self._r_switch + self._r_reroute
 		self.last_reward = reward
 
+		if os.getenv("GNPY_ENV_DEBUG_REWARDS") == "1" and (self.timestep <= 5 or self.timestep % 20 == 0):
+			print(
+				f"[t={self.timestep}] LNI={lni:.3f} switches={switch_count:.0f} reroute={reroute_cost:.2f} "
+				f"R={reward:.3f} components={{'detect': {self._r_detect:.3f}, 'lni': {self._r_lni:.3f}, "
+				f"'switch': {self._r_switch:.3f}, 'reroute': {self._r_reroute:.3f}}}"
+			)
+
 		obs = self._get_obs(reset=False)
-		info = {"monitored_paths": len(self.monitored_trails),
+		info = {
+			"monitored_paths": len(self.monitored_trails),
 			"remaining_candidates": len(self.lightpaths),
 			"score": self.curr_score,
+			"lni": lni,
+			"time_limit_reached": bool(time_limit_reached),
+			"reward_components": {
+				"detect": float(self._r_detect),
+				"lni_term": float(self._r_lni),
+				"switch": float(self._r_switch),
+				"reroute": float(self._r_reroute),
+			},
+			"reward_total": float(reward),
 		}
 
 		return obs, float(reward), bool(terminated), bool(truncated), info
