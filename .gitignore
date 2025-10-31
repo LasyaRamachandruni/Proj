@@ -1,0 +1,3 @@
+# ignore desktop.ini files
+.DS_Store
+*.ini

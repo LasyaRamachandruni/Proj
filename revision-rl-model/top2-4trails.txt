@@ -1,0 +1,126 @@
+New sesh
+timestep: 9502, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9506, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9510, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9514, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9518, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9522, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9526, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9530, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9534, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9538, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9542, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9546, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9550, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9554, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9558, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9562, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9566, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9570, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9574, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9578, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9582, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9586, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9590, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9594, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9598, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9602, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9606, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9610, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9614, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9618, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9622, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9626, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9630, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9634, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9638, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9642, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9646, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9650, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9654, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9658, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9662, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9666, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9670, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9674, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9678, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9682, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9686, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9690, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9694, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9698, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9702, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9706, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9710, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9714, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9718, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9722, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9726, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9730, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9734, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9738, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9742, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9746, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9750, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9754, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9758, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9762, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9766, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9770, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9774, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9778, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9782, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9786, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9790, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9794, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9798, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9802, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9806, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9810, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9814, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9818, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9822, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9826, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9830, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9834, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9838, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9842, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9846, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9850, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9854, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9858, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9862, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9866, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9870, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9874, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9878, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9882, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9886, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9890, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9894, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9898, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9902, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9906, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9910, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9914, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9918, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9922, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9926, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9930, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9934, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9938, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9942, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9946, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9950, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9954, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9958, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9962, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9966, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9970, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9974, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9978, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9982, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json
+timestep: 9986, lni: 3, broken fiber: fiber (dC_v2 → dC_v4), output_file_10.json
+timestep: 9990, lni: 26, broken fiber: fiber (dA_v1 → dC_v1)_(2 of 2), output_file_11.json
+timestep: 9994, lni: 1, broken fiber: fiber (dD_v2 → dC_v2)_(2 of 2), output_file_7.json
+timestep: 9998, lni: 4, broken fiber: fiber (dA_v1 → dA_v2), output_file_19.json

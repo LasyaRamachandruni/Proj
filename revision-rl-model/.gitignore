@@ -1,0 +1,4 @@
+optical_monitoring.py
+__pycache__/*
+.env
+txt_to_csv.py

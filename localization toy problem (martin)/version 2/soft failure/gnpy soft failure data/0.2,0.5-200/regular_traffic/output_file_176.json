@@ -1,0 +1,4408 @@
+{
+  "response": [
+    {
+      "response-id": "1_1",
+      "path-properties": {
+        "path-metric": [
+          {
+            "metric-type": "SNR-bandwidth",
+            "accumulative-value": 18.42
+          },
+          {
+            "metric-type": "SNR-0.1nm",
+            "accumulative-value": 18.24
+          },
+          {
+            "metric-type": "OSNR-bandwidth",
+            "accumulative-value": 22.13
+          },
+          {
+            "metric-type": "OSNR-0.1nm",
+            "accumulative-value": 21.96
+          },
+          {
+            "metric-type": "reference_power",
+            "accumulative-value": 0.001
+          },
+          {
+            "metric-type": "path_bandwidth",
+            "accumulative-value": 50000000000.0
+          }
+        ],
+        "path-route-objects": [
+          {
+            "path-route-object": {
+              "index": 0,
+              "num-unnum-hop": {
+                "node-id": "trx_dA_v2",
+                "link-tp-id": "trx_dA_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 1,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 2,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 3,
+              "num-unnum-hop": {
+                "node-id": "dA_v2",
+                "link-tp-id": "dA_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 4,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 5,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dB_v3)_(1/2)",
+                "link-tp-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dB_v3)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 6,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 7,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v2 → dB_v3)_(1/2)",
+                "link-tp-id": "fiber (dA_v2 → dB_v3)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 8,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 9,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dA_v2 → dB_v3)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dA_v2 → dB_v3)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 10,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 11,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v2 → dB_v3)_(2/2)",
+                "link-tp-id": "fiber (dA_v2 → dB_v3)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 12,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 13,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v2_from_fiber (dB_v3 → dA_v2)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dA_v2_from_fiber (dB_v3 → dA_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 14,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 15,
+              "num-unnum-hop": {
+                "node-id": "dB_v3",
+                "link-tp-id": "dB_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 16,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 17,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v3_to_fiber (dB_v3 → dB_v4)",
+                "link-tp-id": "Edfa_booster_dB_v3_to_fiber (dB_v3 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 18,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 19,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v3 → dB_v4)",
+                "link-tp-id": "fiber (dB_v3 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 20,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 21,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v3_from_fiber (dB_v4 → dB_v3)",
+                "link-tp-id": "Edfa_preamp_dB_v3_from_fiber (dB_v4 → dB_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 22,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 23,
+              "num-unnum-hop": {
+                "node-id": "dB_v4",
+                "link-tp-id": "dB_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 24,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 25,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v4_to_fiber (dB_v4 → dB_v2)",
+                "link-tp-id": "Edfa_booster_dB_v4_to_fiber (dB_v4 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 26,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 27,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v4 → dB_v2)",
+                "link-tp-id": "fiber (dB_v4 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 28,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 29,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v4_from_fiber (dB_v2 → dB_v4)",
+                "link-tp-id": "Edfa_preamp_dB_v4_from_fiber (dB_v2 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 30,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 31,
+              "num-unnum-hop": {
+                "node-id": "dB_v2",
+                "link-tp-id": "dB_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 32,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 33,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v2_to_fiber (dB_v2 → dB_v5)",
+                "link-tp-id": "Edfa_booster_dB_v2_to_fiber (dB_v2 → dB_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 34,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 35,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v2 → dB_v5)",
+                "link-tp-id": "fiber (dB_v2 → dB_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 36,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 37,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v2_from_fiber (dB_v5 → dB_v2)",
+                "link-tp-id": "Edfa_preamp_dB_v2_from_fiber (dB_v5 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 38,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 39,
+              "num-unnum-hop": {
+                "node-id": "dB_v5",
+                "link-tp-id": "dB_v5"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 40,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 41,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v5_to_fiber (dB_v5 → dB_v1)",
+                "link-tp-id": "Edfa_booster_dB_v5_to_fiber (dB_v5 → dB_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 42,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 43,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v5 → dB_v1)",
+                "link-tp-id": "fiber (dB_v5 → dB_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 44,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 45,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v5_from_fiber (dB_v1 → dB_v5)",
+                "link-tp-id": "Edfa_preamp_dB_v5_from_fiber (dB_v1 → dB_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 46,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 47,
+              "num-unnum-hop": {
+                "node-id": "dB_v1",
+                "link-tp-id": "dB_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 48,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 49,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v1_to_fiber (dB_v1 → dA_v1)_(1/2)",
+                "link-tp-id": "Edfa_booster_dB_v1_to_fiber (dB_v1 → dA_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 50,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 51,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v1 → dA_v1)_(1/2)",
+                "link-tp-id": "fiber (dB_v1 → dA_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 52,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 53,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dB_v1 → dA_v1)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dB_v1 → dA_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 54,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 55,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v1 → dA_v1)_(2/2)",
+                "link-tp-id": "fiber (dB_v1 → dA_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 56,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 57,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v1_from_fiber (dA_v1 → dB_v1)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dB_v1_from_fiber (dA_v1 → dB_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 58,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 59,
+              "num-unnum-hop": {
+                "node-id": "dA_v1",
+                "link-tp-id": "dA_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 60,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 61,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dC_v1)_(1/2)",
+                "link-tp-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dC_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 62,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 63,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dC_v1)_(1/2)",
+                "link-tp-id": "fiber (dA_v1 → dC_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 64,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 65,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dA_v1 → dC_v1)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dA_v1 → dC_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 66,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 67,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dC_v1)_(2/2)",
+                "link-tp-id": "fiber (dA_v1 → dC_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 68,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 69,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v1_from_fiber (dC_v1 → dA_v1)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dA_v1_from_fiber (dC_v1 → dA_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 70,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 71,
+              "num-unnum-hop": {
+                "node-id": "dC_v1",
+                "link-tp-id": "dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 72,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 73,
+              "num-unnum-hop": {
+                "node-id": "trx_dC_v1",
+                "link-tp-id": "trx_dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 74,
+              "label-hop": [
+                {
+                  "N": -271,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 75,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "response-id": "1_2",
+      "path-properties": {
+        "path-metric": [
+          {
+            "metric-type": "SNR-bandwidth",
+            "accumulative-value": 18.99
+          },
+          {
+            "metric-type": "SNR-0.1nm",
+            "accumulative-value": 18.81
+          },
+          {
+            "metric-type": "OSNR-bandwidth",
+            "accumulative-value": 22.52
+          },
+          {
+            "metric-type": "OSNR-0.1nm",
+            "accumulative-value": 22.34
+          },
+          {
+            "metric-type": "reference_power",
+            "accumulative-value": 0.001
+          },
+          {
+            "metric-type": "path_bandwidth",
+            "accumulative-value": 50000000000.0
+          }
+        ],
+        "path-route-objects": [
+          {
+            "path-route-object": {
+              "index": 0,
+              "num-unnum-hop": {
+                "node-id": "trx_dD_v2",
+                "link-tp-id": "trx_dD_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 1,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 2,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 3,
+              "num-unnum-hop": {
+                "node-id": "dD_v2",
+                "link-tp-id": "dD_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 4,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 5,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v2_to_fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "Edfa_booster_dD_v2_to_fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 6,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 7,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 8,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 9,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 10,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 11,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v2 → dC_v2)_(2/2)",
+                "link-tp-id": "fiber (dD_v2 → dC_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 12,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 13,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v2_from_fiber (dC_v2 → dD_v2)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dD_v2_from_fiber (dC_v2 → dD_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 14,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 15,
+              "num-unnum-hop": {
+                "node-id": "dC_v2",
+                "link-tp-id": "dC_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 16,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 17,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v2_to_fiber (dC_v2 → dC_v4)",
+                "link-tp-id": "Edfa_booster_dC_v2_to_fiber (dC_v2 → dC_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 18,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 19,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v2 → dC_v4)",
+                "link-tp-id": "fiber (dC_v2 → dC_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 20,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 21,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v2_from_fiber (dC_v4 → dC_v2)",
+                "link-tp-id": "Edfa_preamp_dC_v2_from_fiber (dC_v4 → dC_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 22,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 23,
+              "num-unnum-hop": {
+                "node-id": "dC_v4",
+                "link-tp-id": "dC_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 24,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 25,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v4_to_fiber (dC_v4 → dC_v3)",
+                "link-tp-id": "Edfa_booster_dC_v4_to_fiber (dC_v4 → dC_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 26,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 27,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v4 → dC_v3)",
+                "link-tp-id": "fiber (dC_v4 → dC_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 28,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 29,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v4_from_fiber (dC_v3 → dC_v4)",
+                "link-tp-id": "Edfa_preamp_dC_v4_from_fiber (dC_v3 → dC_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 30,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 31,
+              "num-unnum-hop": {
+                "node-id": "dC_v3",
+                "link-tp-id": "dC_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 32,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 33,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v3_to_fiber (dC_v3 → dA_v2)_(1/2)",
+                "link-tp-id": "Edfa_booster_dC_v3_to_fiber (dC_v3 → dA_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 34,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 35,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v3 → dA_v2)_(1/2)",
+                "link-tp-id": "fiber (dC_v3 → dA_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 36,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 37,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dC_v3 → dA_v2)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dC_v3 → dA_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 38,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 39,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v3 → dA_v2)_(2/2)",
+                "link-tp-id": "fiber (dC_v3 → dA_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 40,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 41,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v3_from_fiber (dA_v2 → dC_v3)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dC_v3_from_fiber (dA_v2 → dC_v3)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 42,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 43,
+              "num-unnum-hop": {
+                "node-id": "dA_v2",
+                "link-tp-id": "dA_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 44,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 45,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dA_v4)",
+                "link-tp-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 46,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 47,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v2 → dA_v4)",
+                "link-tp-id": "fiber (dA_v2 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 48,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 49,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v2_from_fiber (dA_v4 → dA_v2)",
+                "link-tp-id": "Edfa_preamp_dA_v2_from_fiber (dA_v4 → dA_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 50,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 51,
+              "num-unnum-hop": {
+                "node-id": "dA_v4",
+                "link-tp-id": "dA_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 52,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 53,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v4_to_fiber (dA_v4 → dA_v3)",
+                "link-tp-id": "Edfa_booster_dA_v4_to_fiber (dA_v4 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 54,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 55,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v4 → dA_v3)",
+                "link-tp-id": "fiber (dA_v4 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 56,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 57,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v4_from_fiber (dA_v3 → dA_v4)",
+                "link-tp-id": "Edfa_preamp_dA_v4_from_fiber (dA_v3 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 58,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 59,
+              "num-unnum-hop": {
+                "node-id": "dA_v3",
+                "link-tp-id": "dA_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 60,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 61,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v3_to_fiber (dA_v3 → dA_v1)",
+                "link-tp-id": "Edfa_booster_dA_v3_to_fiber (dA_v3 → dA_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 62,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 63,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v3 → dA_v1)",
+                "link-tp-id": "fiber (dA_v3 → dA_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 64,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 65,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v3_from_fiber (dA_v1 → dA_v3)",
+                "link-tp-id": "Edfa_preamp_dA_v3_from_fiber (dA_v1 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 66,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 67,
+              "num-unnum-hop": {
+                "node-id": "dA_v1",
+                "link-tp-id": "dA_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 68,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 69,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dC_v1)_(1/2)",
+                "link-tp-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dC_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 70,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 71,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dC_v1)_(1/2)",
+                "link-tp-id": "fiber (dA_v1 → dC_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 72,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 73,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dA_v1 → dC_v1)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dA_v1 → dC_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 74,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 75,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dC_v1)_(2/2)",
+                "link-tp-id": "fiber (dA_v1 → dC_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 76,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 77,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v1_from_fiber (dC_v1 → dA_v1)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dA_v1_from_fiber (dC_v1 → dA_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 78,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 79,
+              "num-unnum-hop": {
+                "node-id": "dC_v1",
+                "link-tp-id": "dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 80,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 81,
+              "num-unnum-hop": {
+                "node-id": "trx_dC_v1",
+                "link-tp-id": "trx_dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 82,
+              "label-hop": [
+                {
+                  "N": -263,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 83,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "response-id": "1_3",
+      "path-properties": {
+        "path-metric": [
+          {
+            "metric-type": "SNR-bandwidth",
+            "accumulative-value": 16.88
+          },
+          {
+            "metric-type": "SNR-0.1nm",
+            "accumulative-value": 16.7
+          },
+          {
+            "metric-type": "OSNR-bandwidth",
+            "accumulative-value": 19.88
+          },
+          {
+            "metric-type": "OSNR-0.1nm",
+            "accumulative-value": 19.7
+          },
+          {
+            "metric-type": "reference_power",
+            "accumulative-value": 0.001
+          },
+          {
+            "metric-type": "path_bandwidth",
+            "accumulative-value": 50000000000.0
+          }
+        ],
+        "path-route-objects": [
+          {
+            "path-route-object": {
+              "index": 0,
+              "num-unnum-hop": {
+                "node-id": "trx_dC_v3",
+                "link-tp-id": "trx_dC_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 1,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 2,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 3,
+              "num-unnum-hop": {
+                "node-id": "dC_v3",
+                "link-tp-id": "dC_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 4,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 5,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v3_to_fiber (dC_v3 → dA_v2)_(1/2)",
+                "link-tp-id": "Edfa_booster_dC_v3_to_fiber (dC_v3 → dA_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 6,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 7,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v3 → dA_v2)_(1/2)",
+                "link-tp-id": "fiber (dC_v3 → dA_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 8,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 9,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dC_v3 → dA_v2)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dC_v3 → dA_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 10,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 11,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v3 → dA_v2)_(2/2)",
+                "link-tp-id": "fiber (dC_v3 → dA_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 12,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 13,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v3_from_fiber (dA_v2 → dC_v3)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dC_v3_from_fiber (dA_v2 → dC_v3)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 14,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 15,
+              "num-unnum-hop": {
+                "node-id": "dA_v2",
+                "link-tp-id": "dA_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 16,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 17,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dA_v4)",
+                "link-tp-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 18,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 19,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v2 → dA_v4)",
+                "link-tp-id": "fiber (dA_v2 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 20,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 21,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v2_from_fiber (dA_v4 → dA_v2)",
+                "link-tp-id": "Edfa_preamp_dA_v2_from_fiber (dA_v4 → dA_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 22,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 23,
+              "num-unnum-hop": {
+                "node-id": "dA_v4",
+                "link-tp-id": "dA_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 24,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 25,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v4_to_fiber (dA_v4 → dA_v3)",
+                "link-tp-id": "Edfa_booster_dA_v4_to_fiber (dA_v4 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 26,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 27,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v4 → dA_v3)",
+                "link-tp-id": "fiber (dA_v4 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 28,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 29,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v4_from_fiber (dA_v3 → dA_v4)",
+                "link-tp-id": "Edfa_preamp_dA_v4_from_fiber (dA_v3 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 30,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 31,
+              "num-unnum-hop": {
+                "node-id": "dA_v3",
+                "link-tp-id": "dA_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 32,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 33,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v3_to_fiber (dA_v3 → dA_v1)",
+                "link-tp-id": "Edfa_booster_dA_v3_to_fiber (dA_v3 → dA_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 34,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 35,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v3 → dA_v1)",
+                "link-tp-id": "fiber (dA_v3 → dA_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 36,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 37,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v3_from_fiber (dA_v1 → dA_v3)",
+                "link-tp-id": "Edfa_preamp_dA_v3_from_fiber (dA_v1 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 38,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 39,
+              "num-unnum-hop": {
+                "node-id": "dA_v1",
+                "link-tp-id": "dA_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 40,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 41,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dB_v1)_(1/2)",
+                "link-tp-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dB_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 42,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 43,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dB_v1)_(1/2)",
+                "link-tp-id": "fiber (dA_v1 → dB_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 44,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 45,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dA_v1 → dB_v1)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dA_v1 → dB_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 46,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 47,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dB_v1)_(2/2)",
+                "link-tp-id": "fiber (dA_v1 → dB_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 48,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 49,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v1_from_fiber (dB_v1 → dA_v1)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dA_v1_from_fiber (dB_v1 → dA_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 50,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 51,
+              "num-unnum-hop": {
+                "node-id": "dB_v1",
+                "link-tp-id": "dB_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 52,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 53,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v1_to_fiber (dB_v1 → dB_v5)",
+                "link-tp-id": "Edfa_booster_dB_v1_to_fiber (dB_v1 → dB_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 54,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 55,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v1 → dB_v5)",
+                "link-tp-id": "fiber (dB_v1 → dB_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 56,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 57,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v1_from_fiber (dB_v5 → dB_v1)",
+                "link-tp-id": "Edfa_preamp_dB_v1_from_fiber (dB_v5 → dB_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 58,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 59,
+              "num-unnum-hop": {
+                "node-id": "dB_v5",
+                "link-tp-id": "dB_v5"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 60,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 61,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v5_to_fiber (dB_v5 → dB_v2)",
+                "link-tp-id": "Edfa_booster_dB_v5_to_fiber (dB_v5 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 62,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 63,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v5 → dB_v2)",
+                "link-tp-id": "fiber (dB_v5 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 64,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 65,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v5_from_fiber (dB_v2 → dB_v5)",
+                "link-tp-id": "Edfa_preamp_dB_v5_from_fiber (dB_v2 → dB_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 66,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 67,
+              "num-unnum-hop": {
+                "node-id": "dB_v2",
+                "link-tp-id": "dB_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 68,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 69,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v2_to_fiber (dB_v2 → dB_v4)",
+                "link-tp-id": "Edfa_booster_dB_v2_to_fiber (dB_v2 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 70,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 71,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v2 → dB_v4)",
+                "link-tp-id": "fiber (dB_v2 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 72,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 73,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v2_from_fiber (dB_v4 → dB_v2)",
+                "link-tp-id": "Edfa_preamp_dB_v2_from_fiber (dB_v4 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 74,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 75,
+              "num-unnum-hop": {
+                "node-id": "dB_v4",
+                "link-tp-id": "dB_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 76,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 77,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v4_to_fiber (dB_v4 → dD_v1)_(1/2)",
+                "link-tp-id": "Edfa_booster_dB_v4_to_fiber (dB_v4 → dD_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 78,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 79,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v4 → dD_v1)_(1/2)",
+                "link-tp-id": "fiber (dB_v4 → dD_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 80,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 81,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dB_v4 → dD_v1)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dB_v4 → dD_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 82,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 83,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v4 → dD_v1)_(2/2)",
+                "link-tp-id": "fiber (dB_v4 → dD_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 84,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 85,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v4_from_fiber (dD_v1 → dB_v4)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dB_v4_from_fiber (dD_v1 → dB_v4)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 86,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 87,
+              "num-unnum-hop": {
+                "node-id": "dD_v1",
+                "link-tp-id": "dD_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 88,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 89,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v1_to_fiber (dD_v1 → dD_v3)",
+                "link-tp-id": "Edfa_booster_dD_v1_to_fiber (dD_v1 → dD_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 90,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 91,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v1 → dD_v3)",
+                "link-tp-id": "fiber (dD_v1 → dD_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 92,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 93,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v1_from_fiber (dD_v3 → dD_v1)",
+                "link-tp-id": "Edfa_preamp_dD_v1_from_fiber (dD_v3 → dD_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 94,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 95,
+              "num-unnum-hop": {
+                "node-id": "dD_v3",
+                "link-tp-id": "dD_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 96,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 97,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v3_to_fiber (dD_v3 → dD_v2)",
+                "link-tp-id": "Edfa_booster_dD_v3_to_fiber (dD_v3 → dD_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 98,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 99,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v3 → dD_v2)",
+                "link-tp-id": "fiber (dD_v3 → dD_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 100,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 101,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v3_from_fiber (dD_v2 → dD_v3)",
+                "link-tp-id": "Edfa_preamp_dD_v3_from_fiber (dD_v2 → dD_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 102,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 103,
+              "num-unnum-hop": {
+                "node-id": "dD_v2",
+                "link-tp-id": "dD_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 104,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 105,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v2_to_fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "Edfa_booster_dD_v2_to_fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 106,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 107,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 108,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 109,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 110,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 111,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v2 → dC_v2)_(2/2)",
+                "link-tp-id": "fiber (dD_v2 → dC_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 112,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 113,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v2_from_fiber (dC_v2 → dD_v2)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dD_v2_from_fiber (dC_v2 → dD_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 114,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 115,
+              "num-unnum-hop": {
+                "node-id": "dC_v2",
+                "link-tp-id": "dC_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 116,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 117,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v2_to_fiber (dC_v2 → dC_v5)",
+                "link-tp-id": "Edfa_booster_dC_v2_to_fiber (dC_v2 → dC_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 118,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 119,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v2 → dC_v5)",
+                "link-tp-id": "fiber (dC_v2 → dC_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 120,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 121,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v2_from_fiber (dC_v5 → dC_v2)",
+                "link-tp-id": "Edfa_preamp_dC_v2_from_fiber (dC_v5 → dC_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 122,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 123,
+              "num-unnum-hop": {
+                "node-id": "dC_v5",
+                "link-tp-id": "dC_v5"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 124,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 125,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v5_to_fiber (dC_v5 → dC_v1)",
+                "link-tp-id": "Edfa_booster_dC_v5_to_fiber (dC_v5 → dC_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 126,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 127,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v5 → dC_v1)",
+                "link-tp-id": "fiber (dC_v5 → dC_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 128,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 129,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v5_from_fiber (dC_v1 → dC_v5)",
+                "link-tp-id": "Edfa_preamp_dC_v5_from_fiber (dC_v1 → dC_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 130,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 131,
+              "num-unnum-hop": {
+                "node-id": "dC_v1",
+                "link-tp-id": "dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 132,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 133,
+              "num-unnum-hop": {
+                "node-id": "trx_dC_v1",
+                "link-tp-id": "trx_dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 134,
+              "label-hop": [
+                {
+                  "N": -255,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 135,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "response-id": "1_4",
+      "path-properties": {
+        "path-metric": [
+          {
+            "metric-type": "SNR-bandwidth",
+            "accumulative-value": 16.42
+          },
+          {
+            "metric-type": "SNR-0.1nm",
+            "accumulative-value": 16.24
+          },
+          {
+            "metric-type": "OSNR-bandwidth",
+            "accumulative-value": 19.68
+          },
+          {
+            "metric-type": "OSNR-0.1nm",
+            "accumulative-value": 19.51
+          },
+          {
+            "metric-type": "reference_power",
+            "accumulative-value": 0.001
+          },
+          {
+            "metric-type": "path_bandwidth",
+            "accumulative-value": 50000000000.0
+          }
+        ],
+        "path-route-objects": [
+          {
+            "path-route-object": {
+              "index": 0,
+              "num-unnum-hop": {
+                "node-id": "trx_dA_v1",
+                "link-tp-id": "trx_dA_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 1,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 2,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 3,
+              "num-unnum-hop": {
+                "node-id": "dA_v1",
+                "link-tp-id": "dA_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 4,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 5,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dA_v3)",
+                "link-tp-id": "Edfa_booster_dA_v1_to_fiber (dA_v1 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 6,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 7,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v1 → dA_v3)",
+                "link-tp-id": "fiber (dA_v1 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 8,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 9,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v1_from_fiber (dA_v3 → dA_v1)",
+                "link-tp-id": "Edfa_preamp_dA_v1_from_fiber (dA_v3 → dA_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 10,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 11,
+              "num-unnum-hop": {
+                "node-id": "dA_v3",
+                "link-tp-id": "dA_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 12,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 13,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v3_to_fiber (dA_v3 → dA_v4)",
+                "link-tp-id": "Edfa_booster_dA_v3_to_fiber (dA_v3 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 14,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 15,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v3 → dA_v4)",
+                "link-tp-id": "fiber (dA_v3 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 16,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 17,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v3_from_fiber (dA_v4 → dA_v3)",
+                "link-tp-id": "Edfa_preamp_dA_v3_from_fiber (dA_v4 → dA_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 18,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 19,
+              "num-unnum-hop": {
+                "node-id": "dA_v4",
+                "link-tp-id": "dA_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 20,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 21,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v4_to_fiber (dA_v4 → dA_v2)",
+                "link-tp-id": "Edfa_booster_dA_v4_to_fiber (dA_v4 → dA_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 22,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 23,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v4 → dA_v2)",
+                "link-tp-id": "fiber (dA_v4 → dA_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 24,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 25,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v4_from_fiber (dA_v2 → dA_v4)",
+                "link-tp-id": "Edfa_preamp_dA_v4_from_fiber (dA_v2 → dA_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 26,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 27,
+              "num-unnum-hop": {
+                "node-id": "dA_v2",
+                "link-tp-id": "dA_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 28,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 29,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dB_v3)_(1/2)",
+                "link-tp-id": "Edfa_booster_dA_v2_to_fiber (dA_v2 → dB_v3)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 30,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 31,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v2 → dB_v3)_(1/2)",
+                "link-tp-id": "fiber (dA_v2 → dB_v3)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 32,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 33,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dA_v2 → dB_v3)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dA_v2 → dB_v3)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 34,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 35,
+              "num-unnum-hop": {
+                "node-id": "fiber (dA_v2 → dB_v3)_(2/2)",
+                "link-tp-id": "fiber (dA_v2 → dB_v3)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 36,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 37,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dA_v2_from_fiber (dB_v3 → dA_v2)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dA_v2_from_fiber (dB_v3 → dA_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 38,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 39,
+              "num-unnum-hop": {
+                "node-id": "dB_v3",
+                "link-tp-id": "dB_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 40,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 41,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v3_to_fiber (dB_v3 → dB_v4)",
+                "link-tp-id": "Edfa_booster_dB_v3_to_fiber (dB_v3 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 42,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 43,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v3 → dB_v4)",
+                "link-tp-id": "fiber (dB_v3 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 44,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 45,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v3_from_fiber (dB_v4 → dB_v3)",
+                "link-tp-id": "Edfa_preamp_dB_v3_from_fiber (dB_v4 → dB_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 46,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 47,
+              "num-unnum-hop": {
+                "node-id": "dB_v4",
+                "link-tp-id": "dB_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 48,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 49,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v4_to_fiber (dB_v4 → dB_v2)",
+                "link-tp-id": "Edfa_booster_dB_v4_to_fiber (dB_v4 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 50,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 51,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v4 → dB_v2)",
+                "link-tp-id": "fiber (dB_v4 → dB_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 52,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 53,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v4_from_fiber (dB_v2 → dB_v4)",
+                "link-tp-id": "Edfa_preamp_dB_v4_from_fiber (dB_v2 → dB_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 54,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 55,
+              "num-unnum-hop": {
+                "node-id": "dB_v2",
+                "link-tp-id": "dB_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 56,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 57,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dB_v2_to_fiber (dB_v2 → dD_v1)_(1/2)",
+                "link-tp-id": "Edfa_booster_dB_v2_to_fiber (dB_v2 → dD_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 58,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 59,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v2 → dD_v1)_(1/2)",
+                "link-tp-id": "fiber (dB_v2 → dD_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 60,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 61,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dB_v2 → dD_v1)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dB_v2 → dD_v1)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 62,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 63,
+              "num-unnum-hop": {
+                "node-id": "fiber (dB_v2 → dD_v1)_(2/2)",
+                "link-tp-id": "fiber (dB_v2 → dD_v1)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 64,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 65,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dB_v2_from_fiber (dD_v1 → dB_v2)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dB_v2_from_fiber (dD_v1 → dB_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 66,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 67,
+              "num-unnum-hop": {
+                "node-id": "dD_v1",
+                "link-tp-id": "dD_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 68,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 69,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v1_to_fiber (dD_v1 → dD_v3)",
+                "link-tp-id": "Edfa_booster_dD_v1_to_fiber (dD_v1 → dD_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 70,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 71,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v1 → dD_v3)",
+                "link-tp-id": "fiber (dD_v1 → dD_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 72,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 73,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v1_from_fiber (dD_v3 → dD_v1)",
+                "link-tp-id": "Edfa_preamp_dD_v1_from_fiber (dD_v3 → dD_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 74,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 75,
+              "num-unnum-hop": {
+                "node-id": "dD_v3",
+                "link-tp-id": "dD_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 76,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 77,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v3_to_fiber (dD_v3 → dD_v2)",
+                "link-tp-id": "Edfa_booster_dD_v3_to_fiber (dD_v3 → dD_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 78,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 79,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v3 → dD_v2)",
+                "link-tp-id": "fiber (dD_v3 → dD_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 80,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 81,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v3_from_fiber (dD_v2 → dD_v3)",
+                "link-tp-id": "Edfa_preamp_dD_v3_from_fiber (dD_v2 → dD_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 82,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 83,
+              "num-unnum-hop": {
+                "node-id": "dD_v2",
+                "link-tp-id": "dD_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 84,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 85,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dD_v2_to_fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "Edfa_booster_dD_v2_to_fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 86,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 87,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 88,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 89,
+              "num-unnum-hop": {
+                "node-id": "Edfa_fiber (dD_v2 → dC_v2)_(1/2)",
+                "link-tp-id": "Edfa_fiber (dD_v2 → dC_v2)_(1/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 90,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 91,
+              "num-unnum-hop": {
+                "node-id": "fiber (dD_v2 → dC_v2)_(2/2)",
+                "link-tp-id": "fiber (dD_v2 → dC_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 92,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 93,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dD_v2_from_fiber (dC_v2 → dD_v2)_(2/2)",
+                "link-tp-id": "Edfa_preamp_dD_v2_from_fiber (dC_v2 → dD_v2)_(2/2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 94,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 95,
+              "num-unnum-hop": {
+                "node-id": "dC_v2",
+                "link-tp-id": "dC_v2"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 96,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 97,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v2_to_fiber (dC_v2 → dC_v4)",
+                "link-tp-id": "Edfa_booster_dC_v2_to_fiber (dC_v2 → dC_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 98,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 99,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v2 → dC_v4)",
+                "link-tp-id": "fiber (dC_v2 → dC_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 100,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 101,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v2_from_fiber (dC_v4 → dC_v2)",
+                "link-tp-id": "Edfa_preamp_dC_v2_from_fiber (dC_v4 → dC_v2)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 102,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 103,
+              "num-unnum-hop": {
+                "node-id": "dC_v4",
+                "link-tp-id": "dC_v4"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 104,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 105,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v4_to_fiber (dC_v4 → dC_v3)",
+                "link-tp-id": "Edfa_booster_dC_v4_to_fiber (dC_v4 → dC_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 106,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 107,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v4 → dC_v3)",
+                "link-tp-id": "fiber (dC_v4 → dC_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 108,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 109,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v4_from_fiber (dC_v3 → dC_v4)",
+                "link-tp-id": "Edfa_preamp_dC_v4_from_fiber (dC_v3 → dC_v4)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 110,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 111,
+              "num-unnum-hop": {
+                "node-id": "dC_v3",
+                "link-tp-id": "dC_v3"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 112,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 113,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v3_to_fiber (dC_v3 → dC_v5)",
+                "link-tp-id": "Edfa_booster_dC_v3_to_fiber (dC_v3 → dC_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 114,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 115,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v3 → dC_v5)",
+                "link-tp-id": "fiber (dC_v3 → dC_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 116,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 117,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v3_from_fiber (dC_v5 → dC_v3)",
+                "link-tp-id": "Edfa_preamp_dC_v3_from_fiber (dC_v5 → dC_v3)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 118,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 119,
+              "num-unnum-hop": {
+                "node-id": "dC_v5",
+                "link-tp-id": "dC_v5"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 120,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 121,
+              "num-unnum-hop": {
+                "node-id": "Edfa_booster_dC_v5_to_fiber (dC_v5 → dC_v1)",
+                "link-tp-id": "Edfa_booster_dC_v5_to_fiber (dC_v5 → dC_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 122,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 123,
+              "num-unnum-hop": {
+                "node-id": "fiber (dC_v5 → dC_v1)",
+                "link-tp-id": "fiber (dC_v5 → dC_v1)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 124,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 125,
+              "num-unnum-hop": {
+                "node-id": "Edfa_preamp_dC_v5_from_fiber (dC_v1 → dC_v5)",
+                "link-tp-id": "Edfa_preamp_dC_v5_from_fiber (dC_v1 → dC_v5)"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 126,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 127,
+              "num-unnum-hop": {
+                "node-id": "dC_v1",
+                "link-tp-id": "dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 128,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 129,
+              "num-unnum-hop": {
+                "node-id": "trx_dC_v1",
+                "link-tp-id": "trx_dC_v1"
+              }
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 130,
+              "label-hop": [
+                {
+                  "N": -247,
+                  "M": 4
+                }
+              ]
+            }
+          },
+          {
+            "path-route-object": {
+              "index": 131,
+              "transponder": {
+                "transponder-type": "Voyager",
+                "transponder-mode": "mode 1"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
