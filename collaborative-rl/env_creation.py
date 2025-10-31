@@ -3,6 +3,9 @@ import networkx as nx
 import random
 from dotenv import load_dotenv
 from toy2 import Optical_Monitoring
+import math
+
+import gymnasium as gym
 from gymnasium import Env
 from gymnasium.spaces import Discrete, Box
 from typing import List
@@ -151,18 +154,16 @@ class GNPyEnv_Gradual(Env):
 		self.broken_fibers_dir = broken_fibers_dir
 		self.broken_fibers = broken_fibers
 
-		self.obs_vector_length = (
-			self.max_monitoring_trails
-			+ self.max_monitoring_trails * self.num_edges
-			+ self.max_services_per_round * self.num_edges
-		)
-		self.observation_space = Box(
-			low=np.zeros(self.obs_vector_length, dtype=np.float32),
-			high=np.full(self.obs_vector_length, 2.0, dtype=np.float32),
+		self.n_actions = max(1, min(self.max_services_per_round, self.max_services_per_round))
+		self.action_space = gym.spaces.Discrete(self.n_actions)
+
+		self.obs_dim = max(128, self.max_monitoring_trails + self.max_services_per_round + self.num_edges)
+		self.observation_space = gym.spaces.Box(
+			low=-1.0,
+			high=1.0,
+			shape=(self.obs_dim,),
 			dtype=np.float32,
 		)
-
-		self.action_space = Discrete(self.max_services_per_round)
 
 	def translate_trail(self, ls: list, translate_type: str):
 		"""
@@ -200,7 +201,15 @@ class GNPyEnv_Gradual(Env):
 		retval = []
 
 		for i in range(len(ls) - 1):
-			retval.append(self.edge_name_to_id[(ls[i], ls[i+1])] if (ls[i], ls[i+1]) in self.edge_name_to_id else self.edge_name_to_id[(ls[i+1], ls[i])])
+			u, v = ls[i], ls[i + 1]
+			edge = (self.node_id_to_name[u], self.node_id_to_name[v])
+			rev_edge = (edge[1], edge[0])
+			if edge in self.edge_name_to_id:
+				retval.append(self.edge_name_to_id[edge])
+			elif rev_edge in self.edge_name_to_id:
+				retval.append(self.edge_name_to_id[rev_edge])
+			else:
+				raise ValueError(f"Edge {edge} not found in broker graph")
 
 		return retval
 
@@ -226,53 +235,50 @@ class GNPyEnv_Gradual(Env):
 				raise ValueError("edge does not exist!!!!")
 
 		return retval
-	
-	def _get_obs(self, reset : bool):
-		metrics = []
-		edge_vector_ls = []
+
+	def _get_obs(self, reset: bool) -> np.ndarray:
+		metrics: list[list[float]] = []
+		edge_vector_ls: list[list[int]] = []
 
 		if reset:
 			self.lightpaths = []
 			self.lightpaths_osnrs = []
 			self.lightpaths_edge_vector = []
 
-			for d in self.responses:
-				# d is a dict. "path" is the key to lead to the path (name format)
-				path_as_node_names = d["path"]
+			for response in self.responses:
+				path_as_node_names = response["path"]
 				path_as_node_ids = self.translate_trail(path_as_node_names, "name to id")
 				path_as_edge_vector = self.translate_trail_to_edge_vector(path_as_node_names)
 				self.lightpaths_edge_vector.append(path_as_edge_vector)
 				self.lightpaths.append(path_as_node_ids)
 				self.lightpaths_osnrs.append([
-	                d['OSNR-0.1nm'],
-	                d['OSNR-bandwidth'],
-	                d['SNR-0.1nm'],
-	                d['SNR-bandwidth']
-	            ])
+					response['OSNR-0.1nm'],
+					response['OSNR-bandwidth'],
+					response['SNR-0.1nm'],
+					response['SNR-bandwidth']
+				])
 
-				# get indexes of chosen moni paths
 				if path_as_edge_vector not in edge_vector_ls and path_as_edge_vector in self.monitored_trails_edge_vector:
 					edge_vector_ls.append(path_as_edge_vector)
 					metrics.append([
-					    d['OSNR-0.1nm'],
-					    d['OSNR-bandwidth'],
-					    d['SNR-0.1nm'],
-					    d['SNR-bandwidth']
+						response['OSNR-0.1nm'],
+						response['OSNR-bandwidth'],
+						response['SNR-0.1nm'],
+						response['SNR-bandwidth']
 					])
 		else:
-			for d in self.responses:
-				path_as_node_names = d["path"]
+			for response in self.responses:
+				path_as_node_names = response["path"]
 				path_as_edge_vector = self.translate_trail_to_edge_vector(path_as_node_names)
 				if path_as_edge_vector not in edge_vector_ls and path_as_edge_vector in self.monitored_trails_edge_vector:
 					edge_vector_ls.append(path_as_edge_vector)
 					metrics.append([
-					    d['OSNR-0.1nm'],
-					    d['OSNR-bandwidth'],
-					    d['SNR-0.1nm'],
-					    d['SNR-bandwidth']
+						response['OSNR-0.1nm'],
+						response['OSNR-bandwidth'],
+						response['SNR-0.1nm'],
+						response['SNR-bandwidth']
 					])
 
-		# changing to 1-d list with padding to multiples of 16
 		flat_metrics = np.array(metrics, dtype=np.float32).flatten()
 		if flat_metrics.size == 0:
 			flat_metrics = np.zeros(16, dtype=np.float32)
@@ -335,32 +341,37 @@ class GNPyEnv_Gradual(Env):
 			else:
 				candidate_vectors[idx] = vec_arr[:self.num_edges]
 
-		flat_obs = np.concatenate([
+		parts = [
 			binary_vector,
 			chosen_vectors.reshape(-1),
 			candidate_vectors.reshape(-1),
-		]).astype(np.float32)
-
-		return flat_obs
+		]
+		vec = np.concatenate(parts).astype(np.float32)
+		if vec.shape[0] < self.obs_dim:
+			pad = np.zeros(self.obs_dim - vec.shape[0], dtype=np.float32)
+			vec = np.concatenate([vec, pad]).astype(np.float32)
+		elif vec.shape[0] > self.obs_dim:
+			vec = vec[:self.obs_dim]
+		np.clip(vec, -1.0, 1.0, out=vec)
+		return vec.astype(np.float32)
 
 	def _get_info(self):
 		return {"timestep": self.timestep, "output file": self.file_num, "score": self.curr_score}
 
 	def _get_score(self):
-		# get edges from all monitoring paths
 		edges_used = np.zeros(self.num_edges, dtype=np.int32)
-		for v in self.monitored_trails_edge_vector:
-			vec_arr = np.array(v, dtype=np.int32)
-			if vec_arr.size < self.num_edges:
-				padded = np.zeros(self.num_edges, dtype=np.int32)
-				padded[:vec_arr.size] = vec_arr
-				vec_arr = padded
-			else:
-				vec_arr = vec_arr[:self.num_edges]
-			edges_used += vec_arr
+		for trail in self.monitored_trails:
+			try:
+				edge_ids = self.translate_trail_to_edge_ids(trail)
+			except ValueError:
+				continue
+			for eid in edge_ids:
+				if 0 <= eid < self.num_edges:
+					edges_used[eid] += 1
+
 		target_edges = []
-		for i in range(self.num_edges):
-			if edges_used[i] > 0:
+		for i, count in enumerate(edges_used):
+			if count > 0:
 				target_edges.append(self.edge_id_to_name[i])
 
 		return self.om.select_link_failure_test(target_edges), len(target_edges)
