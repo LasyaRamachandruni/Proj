@@ -10,7 +10,8 @@ from typing import List
 import os
 import sys
 import numpy as np
-from keras.models import load_model
+import tensorflow as tf
+from tensorflow.keras.models import load_model
 #from f1_score import F1Score
 #from tensorflow.config import run_functions_eagerly
 
@@ -18,11 +19,25 @@ class GNPyEnv_Gradual(Env):
 	def __init__(self, output_files_dir: str, rounds: int, max_services_per_round: int, broker_graph: nx.classes.graph.Graph, 
 		max_monitoring_trails: int, start_recording_timestep: int, logging_file: str, broken_fibers: List[str], 
 		broken_fibers_dir: str, initial_monitoring_paths: list = None, min_prob_threshold: float = 0.25, node_count_dic: dict | None = None):
-		#run_functions_eagerly(True)
+		tf.config.run_functions_eagerly(True)
 
 		#self.model.build(input_shape=(None, None, 16))
-		self.model = load_model(os.getenv("MODEL_PATH"))#,
+		default_model_path = os.path.join(os.path.dirname(__file__), "saved_model.keras")
+		model_path_env = os.getenv("MODEL_PATH")
+		if model_path_env:
+			candidate_path = os.path.abspath(os.path.expanduser(model_path_env))
+			if os.path.isfile(candidate_path):
+				model_path = candidate_path
+			else:
+				print(f"[GNPyEnv_Gradual] Warning: MODEL_PATH '{candidate_path}' not found. Falling back to '{default_model_path}'.")
+				model_path = default_model_path
+		else:
+			model_path = default_model_path
+		if not os.path.isfile(model_path):
+			raise FileNotFoundError(f"MODEL_PATH '{model_path}' does not exist")
+		self.model = load_model(model_path)#,
 			#custom_objects={"F1Score": F1Score})
+		self.model.run_eagerly = True
 		input_shape = self.model.input_shape
 		print(f"Model input shape: {input_shape}")
 
@@ -58,6 +73,7 @@ class GNPyEnv_Gradual(Env):
 
 		#file
 		self.logging_file = logging_file
+		os.makedirs(os.path.dirname(self.logging_file), exist_ok=True)
 		with open(self.logging_file, "w") as f:
 			f.write("New sesh\n")
 
@@ -81,6 +97,8 @@ class GNPyEnv_Gradual(Env):
 		# setting up Optical Monitoring
 		self.monitored_trails = []
 		self.monitored_trails_edge_vector = []
+		self.persisted_monitor_trails = None
+		self.persisted_monitor_trails_edge_vector = None
 		self.om = Optical_Monitoring(broker_graph)
 		for n in self.node_name_to_id:
 			self.om.add_monitoring_node(n)
@@ -237,7 +255,9 @@ class GNPyEnv_Gradual(Env):
 		X_test = np.expand_dims(X_test, axis=1)
 		print("X_test: ", X_test)
 
-		Y_pred_probs = self.model(X_test, training=False)
+		Y_pred_probs = self.model.predict_on_batch(X_test.astype(np.float32))
+		if not isinstance(Y_pred_probs, np.ndarray):
+			Y_pred_probs = np.array(Y_pred_probs)
 		print("Y_test: ", Y_pred_probs)
 		print("Y_test type: ", type(Y_pred_probs))
 		#Y_pred_probs = self.model.predict_on_batch(np.array(X_test).reshape(1,1,16))
@@ -286,11 +306,28 @@ class GNPyEnv_Gradual(Env):
 		self.monitored_trails.clear()
 		self.monitored_trails_edge_vector.clear()
 
-		# adding initial moni paths
-		for mp in self.initial_monitoring_paths:			
+		# determine which monitoring paths should persist into the new episode
+		if self.persisted_monitor_trails is None:
+			persisted_trails = [list(mp) for mp in self.initial_monitoring_paths]
+			persisted_vectors = [self.translate_trail_to_edge_vector(mp) for mp in persisted_trails]
+		else:
+			persisted_trails = [list(mp) for mp in self.persisted_monitor_trails]
+			persisted_vectors = [list(vec) for vec in self.persisted_monitor_trails_edge_vector]
+
+		seen = set()
+		for mp, vec in zip(persisted_trails, persisted_vectors):
+			if len(self.monitored_trails) >= self.max_monitoring_trails:
+				break
+			key = tuple(mp)
+			if key in seen:
+				continue
+			seen.add(key)
 			self.monitored_trails.append(mp)
 			self.om.add_monitoring_trail(mp)
-			self.monitored_trails_edge_vector.append(self.translate_trail_to_edge_vector(mp))
+			self.monitored_trails_edge_vector.append(vec)
+
+		self.persisted_monitor_trails = [list(mp) for mp in self.monitored_trails]
+		self.persisted_monitor_trails_edge_vector = [list(vec) for vec in self.monitored_trails_edge_vector]
 
 		self.curr_score = None
 
@@ -313,7 +350,10 @@ class GNPyEnv_Gradual(Env):
 			if chosen_path_as_node_names not in self.monitored_trails:
 				self.monitored_trails.append(chosen_path_as_node_names)
 				self.om.add_monitoring_trail(chosen_path_as_node_names)
-				self.monitored_trails_edge_vector.append(chosen_path)
+				edge_vector = self.translate_trail_to_edge_vector(chosen_path_as_node_names)
+				self.monitored_trails_edge_vector.append(edge_vector)
+				self.persisted_monitor_trails = [list(mp) for mp in self.monitored_trails]
+				self.persisted_monitor_trails_edge_vector = [list(vec) for vec in self.monitored_trails_edge_vector]
 			reward = 0
 
 			self.lightpaths.pop(action)

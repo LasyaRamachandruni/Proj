@@ -3,6 +3,8 @@ from ray.tune.registry import register_env
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
 import networkx as nx
 import os
+from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv
 from toy2 import abstract_domain_star
 from ray.rllib.connectors.env_to_module import FlattenObservations
@@ -17,6 +19,18 @@ def run_dqn(model):
 
     # Load the variables from the .env file
     load_dotenv()
+    project_dir = Path(__file__).resolve().parent
+    workspace_dir = project_dir.parent
+
+    def _resolve_path(env_value: Optional[str], default: Path, *, must_exist: bool = True) -> Path:
+        if env_value:
+            candidate = Path(env_value).expanduser()
+            if not candidate.is_absolute():
+                candidate = (workspace_dir / candidate).resolve()
+            if not must_exist or candidate.exists():
+                return candidate
+            print(f"[run_dqn] Warning: Path '{candidate}' not found. Falling back to '{default}'.")
+        return default
 
     initial_moni_paths = None
     node_count_dic = None
@@ -29,7 +43,10 @@ def run_dqn(model):
 
     # toy 2
     top_id = 2
-    output_dir_path = os.getenv("OUTPUT_FILES_DIR_top2")
+    default_output_dir = workspace_dir / "data" / "toy_2-20_rounds-20_reqs"
+    output_dir_path = _resolve_path(os.getenv("OUTPUT_FILES_DIR_top2"), default_output_dir)
+    if not output_dir_path.exists():
+        raise FileNotFoundError(f"Expected output files directory at '{output_dir_path}'")
     broker_fullmesh = nx.Graph()
     broker_fullmesh.add_edge("dA_v1", "dA_v2", weight=3)  # domain A
     broker_fullmesh.add_edge("dB_v1", "dB_v2", weight=2)  # domain B
@@ -102,11 +119,20 @@ def run_dqn(model):
             "fiber (dA_v2 \u2192 dB_v3)_(1/2)"
         ]
 
+    logging_dir_default = project_dir / "logging"
+    broken_fibers_dir_default = project_dir / "data"
+    logging_dir = _resolve_path(os.getenv("LOGGING_FILE_DIR"), logging_dir_default, must_exist=False)
+    broken_fibers_dir = _resolve_path(os.getenv("BROKEN_FIBERS_DIR"), broken_fibers_dir_default)
+    if not broken_fibers_dir.exists():
+        raise FileNotFoundError(f"Expected broken fibers directory at '{broken_fibers_dir}'")
+    logging_dir.mkdir(parents=True, exist_ok=True)
+    logging_file = logging_dir / f"top{top_id}-{max_monitor_trails}trails.txt"
+
     def env_creator(env_config):
-        return GNPyEnv_Gradual(output_files_dir=output_dir_path, rounds=num_rounds, max_services_per_round=max_services_per_round, 
+        return GNPyEnv_Gradual(output_files_dir=str(output_dir_path), rounds=num_rounds, max_services_per_round=max_services_per_round, 
             broker_graph=broker_fullmesh, max_monitoring_trails=max_monitor_trails, start_recording_timestep=start_recording_timestep,
-    		logging_file=os.getenv("LOGGING_FILE_DIR") +"top"+ str(top_id) +"-" + str(max_monitor_trails) + "trails.txt", 
-            broken_fibers=broken_fibers, broken_fibers_dir=os.getenv("BROKEN_FIBERS_DIR"), node_count_dic=node_count_dic)
+            logging_file=str(logging_file), 
+            broken_fibers=broken_fibers, broken_fibers_dir=str(broken_fibers_dir), node_count_dic=node_count_dic)
     register_env("GNPyEnv_Gradual", env_creator)
 
     config = (
