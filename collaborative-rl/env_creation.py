@@ -1,388 +1,616 @@
+from __future__ import annotations
+
 import json
-import networkx as nx
-import random
-from dotenv import load_dotenv
-from toy2 import Optical_Monitoring
-from gymnasium import Env
-from gymnasium.spaces import Discrete, Dict, Box, MultiDiscrete
-from ray.rllib.utils.spaces.repeated import Repeated
-from typing import List
 import os
-import sys
+import random
+from pathlib import Path
+from typing import Dict, List, Optional, Sequence, Tuple
+
+import gymnasium as gym
+import networkx as nx
 import numpy as np
-from keras.models import load_model
-#from f1_score import F1Score
-#from tensorflow.config import run_functions_eagerly
+from gymnasium import Env
+
+from toy2 import Optical_Monitoring
+
+try:  # Optional dependency – the project should still run without TensorFlow/Keras
+    from keras.models import load_model  # type: ignore
+
+    _HAS_KERAS = True
+except Exception:  # pragma: no cover - we simply flag the absence of Keras
+    load_model = None  # type: ignore
+    _HAS_KERAS = False
+
+
+def _pad_features(matrix: np.ndarray, target_dim: int) -> np.ndarray:
+    """Pad or trim feature columns to match *target_dim* (mutating a copy)."""
+
+    matrix = np.asarray(matrix, dtype=np.float32)
+    rows, cols = matrix.shape
+    if cols == target_dim:
+        return matrix
+    if cols > target_dim:
+        return matrix[:, :target_dim]
+
+    pad = np.zeros((rows, target_dim - cols), dtype=np.float32)
+    return np.concatenate([matrix, pad], axis=1)
+
 
 class GNPyEnv_Gradual(Env):
-	def __init__(self, output_files_dir: str, rounds: int, max_services_per_round: int, broker_graph: nx.classes.graph.Graph, 
-		max_monitoring_trails: int, start_recording_timestep: int, logging_file: str, broken_fibers: List[str], 
-		broken_fibers_dir: str, initial_monitoring_paths: list = None, min_prob_threshold: float = 0.25, node_count_dic: dict | None = None):
-		#run_functions_eagerly(True)
+    """Gymnasium-compliant environment for optical network monitoring.
 
-		#self.model.build(input_shape=(None, None, 16))
-		self.model = load_model(os.getenv("MODEL_PATH"))#,
-			#custom_objects={"F1Score": F1Score})
-		input_shape = self.model.input_shape
-		print(f"Model input shape: {input_shape}")
+    The observation is a fixed-length float32 vector composed of:
+    - Selected monitoring trails flattened into edge-usage vectors.
+    - Candidate trails flattened the same way.
+    - (Optional) predicted soft-failure probabilities for each candidate.
+    - A small meta feature block containing progress counters and reward terms.
+    """
 
-		# setting up initial monitoring paths
-		if initial_monitoring_paths is not None:
-			self.initial_monitoring_paths = initial_monitoring_paths
-		else:
-			# default initial moni paths
-			self.initial_monitoring_paths = [['dA_v2', 'dB_v3', 'dB_v4', 'dB_v2', 'dB_v1', 'dA_v1', 'dC_v1'],
-	            ['dD_v2', 'dC_v2', 'dC_v4', 'dC_v3', 'dA_v2', 'dA_v1', 'dC_v1'],
-	            ['dC_v3', 'dA_v2', 'dA_v1', 'dB_v1', 'dB_v2', 'dB_v4', 'dD_v1', 'dD_v2', 'dC_v2', 'dC_v1'],
-	            ['dA_v1', 'dA_v2', 'dB_v3', 'dB_v4', 'dB_v2', 'dD_v1', 'dD_v2', 'dC_v2', 'dC_v4', 'dC_v3', 'dC_v1']]
+    META_FEATURE_COUNT = 10
 
-		# environment setup
-		self.node_count_dic = node_count_dic
-		self.start_recording_timestep = start_recording_timestep
+    def __init__(
+        self,
+        output_files_dir: str,
+        rounds: int,
+        max_services_per_round: int,
+        broker_graph: nx.Graph,
+        max_monitoring_trails: int,
+        start_recording_timestep: int,
+        logging_file: str,
+        broken_fibers: List[str],
+        broken_fibers_dir: str,
+        initial_monitoring_paths: Optional[List[List[str]]] = None,
+        min_prob_threshold: float = 0.25,
+        node_count_dic: Optional[Dict[str, int]] = None,
+    ) -> None:
+        super().__init__()
 
-		self.max_rounds = rounds
+        self.output_files_dir = Path(output_files_dir).expanduser().resolve()
+        if not self.output_files_dir.exists():
+            raise FileNotFoundError(f"Output files directory not found: {self.output_files_dir}")
 
-		self.starting_moni_paths = 4
-		self.max_monitoring_trails = max_monitoring_trails
+        self.broken_fibers_dir = Path(broken_fibers_dir).expanduser().resolve()
+        if not self.broken_fibers_dir.exists():
+            raise FileNotFoundError(f"Broken fibers directory not found: {self.broken_fibers_dir}")
 
-		self.max_services_per_round = max_services_per_round
-		self.output_files_dir = output_files_dir
+        self.logging_file = Path(logging_file).expanduser()
+        if self.logging_file.parent and not self.logging_file.parent.exists():
+            self.logging_file.parent.mkdir(parents=True, exist_ok=True)
+        with self.logging_file.open("w", encoding="utf-8") as log_fp:
+            log_fp.write("New session\n")
 
-		self.broker_graph = broker_graph
-		self.lightpaths_dict = {}
+        self.max_rounds = int(rounds)
+        self.max_services_per_round = max(1, int(max_services_per_round))
+        self.max_monitoring_trails = max(1, int(max_monitoring_trails))
+        self.start_recording_timestep = int(start_recording_timestep)
+        self.min_prob_threshold = float(min_prob_threshold)
+        self.node_count_dic = node_count_dic
 
-		self.timestep = 0
-		self.file_num = 0
+        self.initial_monitoring_paths = (
+            [list(path) for path in initial_monitoring_paths]
+            if initial_monitoring_paths
+            else [
+                ["dA_v2", "dB_v3", "dB_v4", "dB_v2", "dB_v1", "dA_v1", "dC_v1"],
+                ["dD_v2", "dC_v2", "dC_v4", "dC_v3", "dA_v2", "dA_v1", "dC_v1"],
+                ["dC_v3", "dA_v2", "dA_v1", "dB_v1", "dB_v2", "dB_v4", "dD_v1", "dD_v2", "dC_v2", "dC_v1"],
+                ["dA_v1", "dA_v2", "dB_v3", "dB_v4", "dB_v2", "dD_v1", "dD_v2", "dC_v2", "dC_v4", "dC_v3", "dC_v1"],
+            ]
+        )
+        self.persisted_monitoring_trails = [list(path) for path in self.initial_monitoring_paths]
 
-		self.min_prob_threshold = min_prob_threshold
+        self.broker_graph = broker_graph.copy()
+        self.node_name_to_id: Dict[str, int] = {}
+        self.node_id_to_name: Dict[int, str] = {}
+        self.edge_name_to_id: Dict[Tuple[str, str], int] = {}
+        self.edge_id_to_name: Dict[int, Tuple[str, str]] = {}
 
-		#file
-		self.logging_file = logging_file
-		with open(self.logging_file, "w") as f:
-			f.write("New sesh\n")
+        for idx, node in enumerate(self.broker_graph.nodes()):
+            node_name = str(node)
+            self.node_name_to_id[node_name] = idx
+            self.node_id_to_name[idx] = node_name
 
-		# assigning each node and edge to a number
-		self.node_name_to_id = {}
-		self.node_id_to_name = {}
-		self.edge_name_to_id = {}
-		self.edge_id_to_name = {}
-		self.num_nodes = 0
-		self.num_edges = 0
-		for i in broker_graph.nodes():
-			self.node_name_to_id[i] = self.num_nodes
-			self.node_id_to_name[self.num_nodes] = i
-			self.num_nodes += 1
-		for i in broker_graph.edges:
-			self.edge_name_to_id[i] = self.num_edges
-			self.edge_id_to_name[self.num_edges] = i
-			self.num_edges += 1
-		print("# of edges:", self.num_edges)
+        for idx, (u, v) in enumerate(self.broker_graph.edges()):
+            edge = (str(u), str(v))
+            self.edge_name_to_id[edge] = idx
+            self.edge_name_to_id[(edge[1], edge[0])] = idx  # undirected convenience
+            self.edge_id_to_name[idx] = edge
 
-		# setting up Optical Monitoring
-		self.monitored_trails = []
-		self.monitored_trails_edge_vector = []
-		self.om = Optical_Monitoring(broker_graph)
-		for n in self.node_name_to_id:
-			self.om.add_monitoring_node(n)
+        self.num_nodes = len(self.node_name_to_id)
+        self.num_edges = len(self.edge_id_to_name)
 
-		#finding longest path length
-		self.max_possible_path_length = 0
-		for i in broker_graph.nodes:
-			for j in broker_graph.nodes:
-				if i != j:
-					for path in nx.all_simple_paths(broker_graph, i, j):
-						self.max_possible_path_length = max(self.max_possible_path_length, len(path))
-		print('longest path length:', self.max_possible_path_length)
-		if node_count_dic is not None:
-			for i in node_count_dic:
-				self.max_possible_path_length += node_count_dic[i] - 1
+        self.om = None
+        self._rebuild_optical_monitor()
 
-		# checking if broken fibers are valid
-		if not os.path.isdir(broken_fibers_dir):
-			raise Exception("Fake path for broken fibers directory!")
-		sub_dirs_of_broken_fibers = [x[0] for x in os.walk(broken_fibers_dir)]
-		edge_set = self.broker_graph.edges
-		for fiber_name in broken_fibers:
-			found = False
-			modded_name = fiber_name.replace('/',' of ')
-			for s in sub_dirs_of_broken_fibers:
-				if modded_name in s:
-					found = True
-					break
-			if not found:
-				raise Exception(f"Incorrect Fiber Name passed in: {modded_name}, expected something from: {sub_dirs_of_broken_fibers}")
-		self.broken_fibers_dir = broken_fibers_dir
-		self.broken_fibers = broken_fibers
+        self.lightpaths_dict: Dict[str, List[dict]] = {}
+        self.lightpaths: List[List[int]] = []
+        self.lightpaths_edge_vector: List[np.ndarray] = []
+        self.lightpaths_osnrs: List[np.ndarray] = []
+        self.responses: List[dict] = []
+        self.last_pred_probs = np.zeros(0, dtype=np.float32)
+        self.last_pred_binary = np.zeros(0, dtype=np.float32)
 
-		self.observation_space = Dict({
-			# "high" is set to 2 (instead of 1) below to account for cycles that traverse an edge twice
-			"chosen moni paths": Repeated(Box(low=0, high=2, shape=(self.num_edges,), dtype=np.int8), max_len=self.max_monitoring_trails),
-			"0-1": Repeated(Discrete(n=2, start=0), max_len=self.max_monitoring_trails),
-			"new candidate paths": Repeated(Box(low=0, high=2, shape=(self.num_edges,), dtype=np.int8), max_len=self.max_services_per_round)
-		})
+        self.monitored_trails: List[List[str]] = []
+        self.monitored_trails_edge_vector: List[np.ndarray] = []
 
-		self.action_space = Discrete(self.max_services_per_round)
+        self.broken_fibers = broken_fibers or []
+        if self.broken_fibers:
+            self._validate_broken_fibers()
 
-	def translate_trail(self, ls: list, translate_type: str):
-		"""
-		Given a list of nodes (in id or name form), converts to a list
-		of the other form.
+        self.meta_feature_count = self.META_FEATURE_COUNT
+        self.obs_dim = (
+            self.max_monitoring_trails * self.num_edges
+            + self.max_services_per_round * self.num_edges
+            + self.max_services_per_round
+            + self.meta_feature_count
+        )
+        self.observation_space = gym.spaces.Box(
+            low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32
+        )
+        self.action_space = gym.spaces.Discrete(self.max_services_per_round)
 
-        Args:
-            ls (list): The trail you wish to convert
-            translate_type (str): must match one of the two cases below
+        self.max_steps_per_episode = max(200, self.max_rounds * 2)
+        self.lni_target = 0.5
+        self.lni_weight = 0.0
+        self.switch_penalty = 0.0
+        self.reroute_cost_weight = 0.0
 
-        Returns:
-            list: The translated list of the other form.
-		"""
-		retval = None
+        self.timestep = 0
+        self.file_num = 0
+        self.curr_score = 0.0
+        self.last_lni = 0.0
+        self.last_switches = 0.0
+        self.last_reroute_cost = 0.0
 
-		match translate_type:
-			case "id to name":
-				retval = [self.node_id_to_name[i] for i in ls]
-			case "name to id":
-				retval = [self.node_name_to_id[i] for i in ls]
+        self._r_detect = 0.0
+        self._r_lni = 0.0
+        self._r_switch = 0.0
+        self._r_reroute = 0.0
 
-		return retval
+        self.model = None
+        model_path = os.getenv("MODEL_PATH")
+        if model_path and _HAS_KERAS:
+            try:
+                self.model = load_model(model_path)
+            except Exception as exc:  # pragma: no cover - runtime warning only
+                print(f"[GNPyEnv] Failed to load model at {model_path}: {exc}")
 
-	def translate_trail_to_edge_ids(self, ls: list):
-		"""
-		Given a list of nodes (in name form), converts to a list
-		of edge ids.
+    # ---------------------------------------------------------------------
+    # Environment core helpers
+    # ---------------------------------------------------------------------
+    def _rebuild_optical_monitor(self) -> None:
+        self.om = Optical_Monitoring(self.broker_graph)
+        for node_name in self.node_name_to_id:
+            self.om.add_monitoring_node(node_name)
 
-        Args:
-            ls (list): The trail you wish to convert
+    def _validate_broken_fibers(self) -> None:
+        available = {path.name for path in self.broken_fibers_dir.iterdir() if path.is_dir()}
+        for fiber in self.broken_fibers:
+            transformed = fiber.replace("/", " of ")
+            if not any(transformed in item for item in available):
+                raise ValueError(
+                    f"Incorrect fiber name '{transformed}'. Available: {sorted(available)}"
+                )
 
-        Returns:
-            list: The translated list of edge ids
-		"""
-		retval = []
+    # ------------------------------------------------------------------
+    # Translation helpers
+    # ------------------------------------------------------------------
+    def _normalize_node_names(self, trail: Sequence[str | int]) -> List[str]:
+        names = []
+        for node in trail:
+            if isinstance(node, str):
+                names.append(node)
+            elif isinstance(node, (int, np.integer)):
+                names.append(self.node_id_to_name[int(node)])
+            else:
+                raise TypeError(f"Unsupported node type: {type(node)}")
+        return names
 
-		for i in range(len(ls) - 1):
-			retval.append(self.edge_name_to_id[(ls[i], ls[i+1])] if (ls[i], ls[i+1]) in self.edge_name_to_id else self.edge_name_to_id[(ls[i+1], ls[i])])
+    def translate_trail(self, trail: Sequence[str | int], translate_type: str) -> List[str | int]:
+        match translate_type:
+            case "id to name":
+                return self._normalize_node_names(trail)
+            case "name to id":
+                names = self._normalize_node_names(trail)
+                return [self.node_name_to_id[name] for name in names]
+            case _:
+                raise ValueError(f"Unsupported translate_type: {translate_type}")
 
-		return retval
+    def translate_trail_to_edge_ids(self, trail: Sequence[str | int]) -> List[int]:
+        names = self._normalize_node_names(trail)
+        ids: List[int] = []
+        for u, v in zip(names[:-1], names[1:]):
+            if (u, v) in self.edge_name_to_id:
+                ids.append(self.edge_name_to_id[(u, v)])
+            elif (v, u) in self.edge_name_to_id:
+                ids.append(self.edge_name_to_id[(v, u)])
+            else:
+                raise ValueError(f"Edge ({u}, {v}) does not exist in broker graph")
+        return ids
 
-	def translate_trail_to_edge_vector(self, ls: list):
-		"""
-		Given a list of nodes (in name form), converts to a vector
-		of 0-1s for each edge id.
+    def translate_trail_to_edge_vector(self, trail: Sequence[str | int]) -> np.ndarray:
+        names = self._normalize_node_names(trail)
+        vector = np.zeros(self.num_edges, dtype=np.float32)
+        for u, v in zip(names[:-1], names[1:]):
+            if (u, v) in self.edge_name_to_id:
+                vector[self.edge_name_to_id[(u, v)]] += 1.0
+            elif (v, u) in self.edge_name_to_id:
+                vector[self.edge_name_to_id[(v, u)]] += 1.0
+            else:
+                raise ValueError(f"Edge ({u}, {v}) does not exist in broker graph")
+        return vector
 
-        Args:
-            ls (list): The trail you wish to convert
+    # ------------------------------------------------------------------
+    # Episode/state management
+    # ------------------------------------------------------------------
+    def _select_initial_trails(self) -> List[List[str]]:
+        if self.persisted_monitoring_trails:
+            return [list(path) for path in self.persisted_monitoring_trails[-self.max_monitoring_trails :]]
+        return [list(path) for path in self.initial_monitoring_paths[: self.max_monitoring_trails]]
 
-        Returns:
-            list: The vector of 0-1s (size: number of edges in broker graph)
-		"""
-		retval = [0] * self.num_edges
+    def _install_monitoring_trail(self, trail: Sequence[str | int]) -> None:
+        names = self._normalize_node_names(trail)
+        if names in self.monitored_trails:
+            return
+        self.monitored_trails.append(names)
+        self.monitored_trails_edge_vector.append(self.translate_trail_to_edge_vector(names))
+        self.om.add_monitoring_trail(names)
 
-		for i in range(len(ls) - 1):
-			if (ls[i], ls[i+1]) in self.edge_name_to_id:
-				retval[self.edge_name_to_id[(ls[i], ls[i+1])]] += 1
-			elif (ls[i+1], ls[i]) in self.edge_name_to_id:
-				retval[self.edge_name_to_id[(ls[i+1], ls[i])]] += 1
-			else:
-				raise ValueError("edge does not exist!!!!")
+    def _persist_trails(self) -> None:
+        dedup: List[List[str]] = []
+        seen = set()
+        for trail in self.monitored_trails:
+            key = tuple(trail)
+            if key not in seen:
+                dedup.append(list(trail))
+                seen.add(key)
+        self.persisted_monitoring_trails = dedup[-self.max_monitoring_trails :]
 
-		return retval
-	
-	def _get_obs(self, reset : bool):
-		metrics = []
-		edge_vector_ls = []
+    def _extract_file_index(self, filename: str) -> int:
+        start = "output_file_"
+        end = ".json"
+        if start not in filename:
+            return 0
+        start_idx = filename.find(start) + len(start)
+        end_idx = filename.find(end, start_idx)
+        try:
+            return int(filename[start_idx:end_idx])
+        except (TypeError, ValueError):
+            return 0
 
-		if reset:
-			self.lightpaths = []
-			self.lightpaths_osnrs = []
-			self.lightpaths_edge_vector = []
+    def _load_random_snapshot(self) -> None:
+        candidates = [path for path in self.broken_fibers_dir.iterdir() if path.is_dir()]
+        if not candidates:
+            raise FileNotFoundError(f"No sub-directories found under {self.broken_fibers_dir}")
+        random_dir = random.choice(candidates)
+        files = [path for path in random_dir.iterdir() if path.is_file() and path.suffix == ".json"]
+        if not files:
+            raise FileNotFoundError(f"No JSON snapshots inside {random_dir}")
+        chosen_file = random.choice(files)
+        cache_key = f"{random_dir.name}/{chosen_file.name}"
 
-			for d in self.responses:
-				# d is a dict. "path" is the key to lead to the path (name format)
-				path_as_node_names = d["path"]
-				path_as_edge_ids = self.translate_trail_to_edge_ids(path_as_node_names)
-				path_as_edge_vector = self.translate_trail_to_edge_vector(path_as_node_names)
-				self.lightpaths_edge_vector.append(path_as_edge_vector)
-				self.lightpaths.append(path_as_edge_ids)
-				self.lightpaths_osnrs.append([
-	                d['OSNR-0.1nm'],
-	                d['OSNR-bandwidth'],
-	                d['SNR-0.1nm'],
-	                d['SNR-bandwidth']
-	            ])
+        self.file_num = self._extract_file_index(chosen_file.name)
+        if cache_key not in self.lightpaths_dict:
+            self.lightpaths_dict[cache_key] = self.get_lightpaths(chosen_file)
+        self.responses = self.lightpaths_dict[cache_key]
 
-				# get indexes of chosen moni paths
-				if path_as_edge_vector not in edge_vector_ls and path_as_edge_vector in self.monitored_trails_edge_vector:
-					edge_vector_ls.append(path_as_edge_vector)
-					metrics.append([
-					    d['OSNR-0.1nm'],
-					    d['OSNR-bandwidth'],
-					    d['SNR-0.1nm'],
-					    d['SNR-bandwidth']
-					])
-		else:
-			for d in self.responses:
-				path_as_node_names = d["path"]
-				path_as_edge_vector = self.translate_trail_to_edge_vector(path_as_node_names)
-				if path_as_edge_vector not in edge_vector_ls and path_as_edge_vector in self.monitored_trails_edge_vector:
-					edge_vector_ls.append(path_as_edge_vector)
-					metrics.append([
-					    d['OSNR-0.1nm'],
-					    d['OSNR-bandwidth'],
-					    d['SNR-0.1nm'],
-					    d['SNR-bandwidth']
-					])
+    def _prepare_candidates(self) -> None:
+        self.lightpaths.clear()
+        self.lightpaths_edge_vector.clear()
+        self.lightpaths_osnrs.clear()
 
-		# changing to 1-d list
-		X_test = np.array(metrics)
-		X_test = X_test.reshape(-1, 16)
-		X_test = np.expand_dims(X_test, axis=1)
-		print("X_test: ", X_test)
+        for response in self.responses:
+            path_nodes = response.get("path", [])
+            if not path_nodes:
+                continue
+            path_node_names = self._normalize_node_names(path_nodes)
+            path_node_ids = self.translate_trail(path_node_names, "name to id")
+            edge_vector = self.translate_trail_to_edge_vector(path_node_names)
 
-		Y_pred_probs = self.model(X_test, training=False)
-		print("Y_test: ", Y_pred_probs)
-		print("Y_test type: ", type(Y_pred_probs))
-		#Y_pred_probs = self.model.predict_on_batch(np.array(X_test).reshape(1,1,16))
-		# print(Y_pred_probs, type(Y_pred_probs))
-		Y_pred_binary = (Y_pred_probs > self.min_prob_threshold).astype(int)
+            metrics = np.array(
+                [
+                    float(response.get("OSNR-0.1nm", 0.0)),
+                    float(response.get("OSNR-bandwidth", 0.0)),
+                    float(response.get("SNR-0.1nm", 0.0)),
+                    float(response.get("SNR-bandwidth", 0.0)),
+                ],
+                dtype=np.float32,
+            )
 
-		return {
-			"chosen moni paths": self.monitored_trails_edge_vector,
-			"0-1": Y_pred_binary,
-			"new candidate paths": self.lightpaths_edge_vector
-		}
+            self.lightpaths.append(path_node_ids)
+            self.lightpaths_edge_vector.append(edge_vector)
+            self.lightpaths_osnrs.append(metrics)
 
-	def _get_info(self):
-		return {"timestep": self.timestep, "output file": self.file_num, "score": self.curr_score}
+        self.last_pred_probs = np.zeros(len(self.lightpaths), dtype=np.float32)
+        self.last_pred_binary = np.zeros(len(self.lightpaths), dtype=np.float32)
 
-	def _get_score(self):
-		# get edges from all monitoring paths
-		edges_used = [0]*self.num_edges
-		for v in self.monitored_trails_edge_vector:
-			edges_used += v
-		target_edges = []
-		for i in range(len(edges_used)):
-			if edges_used[i] > 0:
-				target_edges.append(self.edge_id_to_name[i])
+    def _compute_predictions(self) -> None:
+        if self.model is None or not self.lightpaths_osnrs:
+            self.last_pred_probs = np.zeros(len(self.lightpaths), dtype=np.float32)
+            self.last_pred_binary = np.zeros(len(self.lightpaths), dtype=np.float32)
+            return
 
-		return self.om.select_link_failure_test(target_edges), len(target_edges)
+        metrics = np.vstack(self.lightpaths_osnrs).astype(np.float32)
+        metrics = _pad_features(metrics.reshape(metrics.shape[0], -1), 16)
+        batch = metrics.reshape(metrics.shape[0], 1, 16)
 
-	def reset(self, seed=None, options=None):
-		# picking random file from random subdirectory (broken fiber or regular traffic)
-		random_subdir = random.choice(os.listdir(self.broken_fibers_dir))
-		files = os.listdir(os.path.join(self.broken_fibers_dir, random_subdir))
-		random_filename = random.choice(files)
-		start_str = "output_file_"
-		end_str = ".json"
-		start_index = random_filename.find(start_str) + len(start_str)
-		end_index = random_filename.find(end_str, start_index)
-		self.file_num = int(random_filename[start_index:end_index])
+        try:
+            preds = self.model.predict(batch, verbose=0)
+        except Exception:
+            preds = self.model(batch, training=False)
 
-		if self.file_num not in self.lightpaths_dict:
-			self.lightpaths_dict[self.file_num] = self.get_lightpaths(os.path.join(self.broken_fibers_dir, random_subdir) + '/' + random_filename)
-		self.responses = self.lightpaths_dict[self.file_num]
+        preds = np.asarray(preds).reshape(-1).astype(np.float32)
+        self.last_pred_probs = np.clip(preds, 0.0, 1.0)
+        self.last_pred_binary = (self.last_pred_probs > self.min_prob_threshold).astype(np.float32)
 
-		# clearing previous monitoring nodes
-		for i in self.monitored_trails:
-			self.om.remove_monitoring_trail(i)
-		self.monitored_trails.clear()
-		self.monitored_trails_edge_vector.clear()
+    # ------------------------------------------------------------------
+    # Observation & info helpers
+    # ------------------------------------------------------------------
+    def _compose_observation(self) -> np.ndarray:
+        chosen = np.zeros((self.max_monitoring_trails, self.num_edges), dtype=np.float32)
+        for idx, vector in enumerate(self.monitored_trails_edge_vector[: self.max_monitoring_trails]):
+            arr = np.asarray(vector, dtype=np.float32)
+            if arr.shape[0] != self.num_edges:
+                arr = np.pad(arr, (0, self.num_edges - arr.shape[0]), mode="constant")
+            chosen[idx] = arr
+        chosen_flat = chosen.reshape(-1)
 
-		# adding initial moni paths
-		for mp in self.initial_monitoring_paths:			
-			self.monitored_trails.append(mp)
-			self.om.add_monitoring_trail(mp)
-			self.monitored_trails_edge_vector.append(self.translate_trail_to_edge_vector(mp))
+        candidates = np.zeros((self.max_services_per_round, self.num_edges), dtype=np.float32)
+        for idx, vector in enumerate(self.lightpaths_edge_vector[: self.max_services_per_round]):
+            arr = np.asarray(vector, dtype=np.float32)
+            if arr.shape[0] != self.num_edges:
+                arr = np.pad(arr, (0, self.num_edges - arr.shape[0]), mode="constant")
+            candidates[idx] = arr
+        candidates_flat = candidates.reshape(-1)
 
-		self.curr_score = None
+        preds = np.zeros(self.max_services_per_round, dtype=np.float32)
+        if len(self.last_pred_probs) > 0:
+            length = min(len(self.last_pred_probs), self.max_services_per_round)
+            preds[:length] = self.last_pred_probs[:length]
 
-		info = self._get_info()
-		observation = self._get_obs(reset=True)
-		return observation, info
+        meta_values = np.array(
+            [
+                len(self.monitored_trails) / max(1, self.max_monitoring_trails),
+                len(self.lightpaths) / max(1, self.max_services_per_round),
+                np.tanh(0.001 * float(self.curr_score)),
+                np.tanh(0.1 * float(self._r_detect)),
+                np.tanh(0.1 * float(self._r_lni)),
+                np.tanh(0.1 * float(self._r_switch)),
+                np.tanh(0.1 * float(self._r_reroute)),
+                self.timestep / max(1, self.max_steps_per_episode),
+                1.0 if len(self.lightpaths) == 0 else 0.0,
+                1.0 if len(self.monitored_trails) >= self.max_monitoring_trails else 0.0,
+            ],
+            dtype=np.float32,
+        )
+        meta = np.zeros(self.meta_feature_count, dtype=np.float32)
+        meta[: min(self.meta_feature_count, meta_values.size)] = meta_values[: self.meta_feature_count]
 
-	def step(self, action):
-		self.timestep += 1
-		terminated = False
-		reward = None
+        obs = np.concatenate([chosen_flat, candidates_flat, preds, meta], dtype=np.float32)
+        np.clip(obs, -1.0, 1.0, out=obs)
+        return obs
 
-		if action >= self.max_services_per_round:
-			print("ERROR")
+    def _validate_obs(self, obs: np.ndarray, location: str) -> None:
+        if not isinstance(obs, np.ndarray):
+            raise TypeError(f"{location}: observation is not a numpy array")
+        if obs.shape != self.observation_space.shape:
+            raise ValueError(f"{location}: observation shape {obs.shape} != {self.observation_space.shape}")
+        if obs.dtype != np.float32:
+            raise TypeError(f"{location}: observation dtype {obs.dtype} != float32")
+        if not np.all(np.isfinite(obs)):
+            bad_indices = np.where(~np.isfinite(obs))[0][:8]
+            raise ValueError(f"{location}: observation contains non-finite values at indices {bad_indices}")
 
-		if action < len(self.lightpaths):
-			chosen_path = self.lightpaths[action] # always chooses a valid path
-			chosen_path_as_node_names = self.translate_trail(chosen_path, "id to name")
+    def _build_info(self, extra: Optional[Dict[str, float]] = None) -> Dict[str, float]:
+        info: Dict[str, float] = {
+            "timestep": float(self.timestep),
+            "file_index": float(self.file_num),
+            "score": float(self.curr_score),
+            "monitored_paths": float(len(self.monitored_trails)),
+            "remaining_candidates": float(len(self.lightpaths)),
+        }
+        if extra:
+            info.update(extra)
+        return info
 
-			if chosen_path_as_node_names not in self.monitored_trails:
-				self.monitored_trails.append(chosen_path_as_node_names)
-				self.om.add_monitoring_trail(chosen_path_as_node_names)
-				self.monitored_trails_edge_vector.append(chosen_path)
-			reward = 0
+    def _append_log(self, payload: Dict[str, float]) -> None:
+        serializable = {k: (float(v) if isinstance(v, (int, float, np.floating)) else v) for k, v in payload.items()}
+        with self.logging_file.open("a", encoding="utf-8") as log_fp:
+            log_fp.write(json.dumps(serializable) + "\n")
 
-			self.lightpaths.pop(action)
-			self.lightpaths_edge_vector.pop(action)
-			self.lightpaths_osnrs.pop(action)
-		else:
-			# illegal action. Terminating
-			reward = -1
-			info = {}
-			observation = self._get_obs(reset=False)
-			terminated = True
-			return observation, reward, terminated, True, info
+    def _get_score(self) -> Tuple[float, int, np.ndarray]:
+        if not self.monitored_trails_edge_vector:
+            return 0.0, 0, np.zeros(self.num_edges, dtype=np.float32)
+        edges_used = np.zeros(self.num_edges, dtype=np.float32)
+        for vector in self.monitored_trails_edge_vector:
+            arr = np.asarray(vector, dtype=np.float32)
+            if arr.shape[0] != self.num_edges:
+                arr = np.pad(arr, (0, self.num_edges - arr.shape[0]), mode="constant")
+            edges_used += arr
+        target_edges = [self.edge_id_to_name[idx] for idx, value in enumerate(edges_used) if value > 0]
+        score = self.om.select_link_failure_test(target_edges)
+        return float(score), len(target_edges), edges_used
 
-		if len(self.monitored_trails_edge_vector) == self.max_monitoring_trails:
-			terminated = True
-			self.curr_score, num_edges_selected = self._get_score()
-			info = self._get_info()
-			reward = ((self.num_edges*num_edges_selected)/self.curr_score)**3
+    # ------------------------------------------------------------------
+    # Gymnasium Env API
+    # ------------------------------------------------------------------
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+        if seed is not None:
+            random.seed(seed)
+            np.random.seed(seed)
 
-			# writing to logging file
-			if self.timestep > self.start_recording_timestep:
-				json_string = json.dumps(info)
-				with open(self.logging_file, "a") as f:
-					f.write(json_string + "\n")
-		else:
-			# Haven't selected enough trails yet
-			info = {}
+        self.timestep = 0
+        self.curr_score = 0.0
+        self._r_detect = 0.0
+        self._r_lni = 0.0
+        self._r_switch = 0.0
+        self._r_reroute = 0.0
+        self.last_lni = 0.0
+        self.last_switches = 0.0
+        self.last_reroute_cost = 0.0
 
-		observation = self._get_obs(reset=False)
-		return observation, reward, terminated, False, info
+        self._rebuild_optical_monitor()
+        self.monitored_trails.clear()
+        self.monitored_trails_edge_vector.clear()
+        for trail in self._select_initial_trails():
+            self._install_monitoring_trail(trail)
+        self._persist_trails()
 
-	def get_lightpaths(self, service_file):
-		node_set = set(self.broker_graph.nodes)
-		with open(service_file, 'r') as file:
-		    # Load the JSON data into a Python dictionary
-		    responses = json.load(file)['response']
-		metrics = set(["SNR-bandwidth", "SNR-0.1nm", "OSNR-bandwidth", "OSNR-0.1nm"])
-		retval = []
+        self._load_random_snapshot()
+        self._prepare_candidates()
+        self._compute_predictions()
 
-		for i in responses:
-			if "path-properties" not in i:
-				continue
+        observation = self._compose_observation()
+        self._validate_obs(observation, "reset")
+        info = self._build_info()
+        return observation, info
 
-			path_route_objects = i["path-properties"]["path-route-objects"]
-			path_metric = i["path-properties"]["path-metric"]
-			curr_path = []
-			for j in path_route_objects:
-				if "num-unnum-hop" in j["path-route-object"]:
-					curr_node = j["path-route-object"]["num-unnum-hop"]["node-id"]
-					if curr_node in node_set:
-						curr_path.append(curr_node)
-			
-			if len(curr_path) > 0:
-				# change path if given node_count_dic for center nodes
-				if self.node_count_dic is not None:
-					indices = []            # keep track of indices of missing center nodes
-					for i in range(len(curr_path) - 1):     # iterate through path
-						nc = self.node_count_dic[curr_path[i][1]]            # look up node count table
-						if (curr_path[i][1] == curr_path[i+1][1]) and (nc >= 3):        # nodes in equivalent domain and have center node (star)
-							indices.insert(0, (i+1, f"d{curr_path[i][1]}_vC"))  # stack
-					for (i, s) in indices:  # insert into path
-						curr_path.insert(i, s)
+    def step(self, action: int):
+        self.timestep += 1
+        reward = 0.0
+        terminated = False
+        truncated = False
 
-				my_dict = {}
-				my_dict["path"] = curr_path
-				for m in path_metric:
-					if m["metric-type"] in metrics:
-						my_dict[m["metric-type"]] = m["accumulative-value"]
+        if not isinstance(action, (int, np.integer)):
+            truncated = True
+            reward = -1.0
+        else:
+            action_idx = int(action)
+            if action_idx < 0 or action_idx >= self.max_services_per_round:
+                truncated = True
+                reward = -1.0
+            elif not self.lightpaths:
+                terminated = True
+            elif action_idx >= len(self.lightpaths):
+                reward = -0.1  # discourage invalid choices when fewer candidates remain
+            else:
+                reward = self._apply_action(action_idx)
 
-				retval.append(my_dict)
+        max_trails_reached = len(self.monitored_trails) >= self.max_monitoring_trails
+        no_candidates = len(self.lightpaths) == 0
+        time_limit_reached = self.timestep >= self.max_steps_per_episode
 
-		return retval
+        if max_trails_reached or no_candidates:
+            terminated = True
+        if time_limit_reached and not terminated:
+            truncated = True
+
+        if terminated and not truncated:
+            score, edges_selected, edges_used = self._get_score()
+            self.curr_score = score
+            self.last_lni = edges_selected / max(1, self.num_edges)
+            self.last_switches = max(0.0, self.last_switches)
+            self.last_reroute_cost = max(0.0, self.last_reroute_cost)
+
+            if score <= 0.0:
+                detection_reward = 0.0
+            else:
+                detection_reward = float(
+                    ((self.num_edges * max(1, edges_selected)) / max(score, 1e-6)) ** 3
+                )
+
+            self._r_detect = detection_reward
+            self._r_lni = self.lni_weight * (self.last_lni - self.lni_target)
+            self._r_reroute = -self.reroute_cost_weight * self.last_reroute_cost
+
+            reward = detection_reward + self._r_lni + self._r_switch + self._r_reroute
+
+            if self.timestep > self.start_recording_timestep:
+                self._append_log(
+                    {
+                        "timestep": self.timestep,
+                        "score": self.curr_score,
+                        "monitored_paths": len(self.monitored_trails),
+                        "edges_selected": edges_selected,
+                    }
+                )
+        elif truncated and reward == 0.0:
+            reward = -0.5  # mild penalty for time-limit truncation
+
+        info = self._build_info(
+            {
+                "time_limit_reached": float(time_limit_reached),
+                "reward_total": float(reward),
+                "reward_components_detect": float(self._r_detect),
+                "reward_components_lni": float(self._r_lni),
+                "reward_components_switch": float(self._r_switch),
+                "reward_components_reroute": float(self._r_reroute),
+            }
+        )
+
+        self._compute_predictions()
+        observation = self._compose_observation()
+        self._validate_obs(observation, "step")
+
+        return observation, float(reward), bool(terminated), bool(truncated), info
+
+    # ------------------------------------------------------------------
+    # Action logic
+    # ------------------------------------------------------------------
+    def _apply_action(self, index: int) -> float:
+        path_node_ids = self.lightpaths.pop(index)
+        path_edge_vector = self.lightpaths_edge_vector.pop(index)
+        _ = self.lightpaths_osnrs.pop(index)
+
+        path_node_names = self.translate_trail(path_node_ids, "id to name")
+        before_count = len(self.monitored_trails)
+        self._install_monitoring_trail(path_node_names)
+        after_count = len(self.monitored_trails)
+
+        added_new = after_count > before_count
+        if added_new:
+            self._persist_trails()
+
+        self._r_switch = -self.switch_penalty * (1.0 if added_new else 0.0)
+        return 0.0
+
+    # ------------------------------------------------------------------
+    # Data loading utilities
+    # ------------------------------------------------------------------
+    def get_lightpaths(self, service_file: Path) -> List[dict]:
+        service_path = Path(service_file)
+        with service_path.open("r", encoding="utf-8") as fp:
+            data = json.load(fp)
+
+        responses = data.get("response", [])
+        metrics_set = {"SNR-bandwidth", "SNR-0.1nm", "OSNR-bandwidth", "OSNR-0.1nm"}
+        results: List[dict] = []
+
+        for response in responses:
+            properties = response.get("path-properties")
+            if not properties:
+                continue
+
+            path_nodes: List[str] = []
+            for obj in properties.get("path-route-objects", []):
+                hop = obj.get("path-route-object", {}).get("num-unnum-hop")
+                if not hop:
+                    continue
+                node_id = hop.get("node-id")
+                if node_id in self.broker_graph.nodes:
+                    path_nodes.append(str(node_id))
+
+            if not path_nodes:
+                continue
+
+            if self.node_count_dic:
+                indices: List[Tuple[int, str]] = []
+                for idx in range(len(path_nodes) - 1):
+                    left_domain = path_nodes[idx][1]
+                    right_domain = path_nodes[idx + 1][1]
+                    if left_domain == right_domain:
+                        count = self.node_count_dic.get(left_domain)
+                        if count and count >= 3:
+                            indices.insert(0, (idx + 1, f"d{left_domain}_vC"))
+                for idx, node_name in indices:
+                    path_nodes.insert(idx, node_name)
+
+            entry = {"path": path_nodes}
+            for metric in properties.get("path-metric", []):
+                metric_type = metric.get("metric-type")
+                if metric_type in metrics_set:
+                    entry[metric_type] = float(metric.get("accumulative-value", 0.0))
+
+            results.append(entry)
+
+        return results
+
