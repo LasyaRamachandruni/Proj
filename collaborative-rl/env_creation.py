@@ -13,12 +13,15 @@ from gymnasium import Env
 
 from toy2 import Optical_Monitoring
 
-try:  # Optional dependency – the project should still run without TensorFlow/Keras
+try:  # Optional dependency – allow the project to run without TensorFlow/Keras
+    import tensorflow as tf  # type: ignore
     from keras.models import load_model  # type: ignore
 
+    tf.config.run_functions_eagerly(True)
     _HAS_KERAS = True
-except Exception:  # pragma: no cover - we simply flag the absence of Keras
+except Exception:  # pragma: no cover - simply flag the absence of Keras/TF
     load_model = None  # type: ignore
+    tf = None  # type: ignore
     _HAS_KERAS = False
 
 
@@ -337,6 +340,18 @@ class GNPyEnv_Gradual(Env):
             preds = self.model.predict(batch, verbose=0)
         except Exception:
             preds = self.model(batch, training=False)
+
+        if tf is not None:
+            try:
+                preds = tf.convert_to_tensor(preds)
+                preds = preds.numpy()
+            except (NotImplementedError, AttributeError):
+                @tf.function(jit_compile=False)
+                def _eager_predict(x):
+                    return self.model(x, training=False)
+
+                preds = _eager_predict(tf.convert_to_tensor(batch, dtype=tf.float32))
+                preds = preds.numpy()
 
         preds = np.asarray(preds).reshape(-1).astype(np.float32)
         self.last_pred_probs = np.clip(preds, 0.0, 1.0)
