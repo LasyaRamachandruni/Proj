@@ -1,0 +1,8 @@
+ray[rllib]==2.51.0
+gymnasium==1.1.1
+python-dotenv==1.0.1
+networkx>=3.2
+
+# Optional: install these only if you need the legacy Keras/TensorFlow model
+# keras==3.4.1
+# tensorflow==2.16.1
