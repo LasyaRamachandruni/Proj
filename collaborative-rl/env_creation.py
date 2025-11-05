@@ -336,24 +336,26 @@ class GNPyEnv_Gradual(Env):
         metrics = _pad_features(metrics.reshape(metrics.shape[0], -1), 16)
         batch = metrics.reshape(metrics.shape[0], 1, 16)
 
-        try:
-            preds = self.model.predict(batch, verbose=0)
-        except Exception:
-            preds = self.model(batch, training=False)
-
-        if tf is not None:
+        preds = None
+        if _HAS_KERAS:
             try:
-                preds = tf.convert_to_tensor(preds)
-                preds = preds.numpy()
-            except (NotImplementedError, AttributeError):
-                @tf.function(jit_compile=False)
-                def _eager_predict(x):
-                    return self.model(x, training=False)
+                preds = self.model.predict(batch, verbose=0)
+            except Exception:
+                try:
+                    preds = self.model(batch, training=False)
+                except Exception:
+                    preds = None
 
-                preds = _eager_predict(tf.convert_to_tensor(batch, dtype=tf.float32))
-                preds = preds.numpy()
+        if preds is None:
+            preds = np.zeros(len(self.lightpaths), dtype=np.float32)
+        else:
+            if tf is not None and isinstance(preds, (tf.Tensor, tf.Variable)):
+                try:
+                    preds = preds.numpy()
+                except AttributeError:
+                    preds = np.asarray(preds)
 
-        preds = np.asarray(preds).reshape(-1).astype(np.float32)
+            preds = np.asarray(preds).reshape(-1).astype(np.float32)
         self.last_pred_probs = np.clip(preds, 0.0, 1.0)
         self.last_pred_binary = (self.last_pred_probs > self.min_prob_threshold).astype(np.float32)
 
